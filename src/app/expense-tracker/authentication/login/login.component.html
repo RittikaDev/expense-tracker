@@ -65,7 +65,7 @@
               @if(loginForm.get('password')?.hasError('required')){
 
               <span *ngIf="" class="text-red-500 text-xs">
-                Email is <strong>required</strong>
+                Password is <strong>required</strong>
               </span>
               } @else if(loginForm.get('password')?.hasError('password')){
 
@@ -110,7 +110,7 @@
           <p class="text-sm font-light text-gray-500">
             Don't have an account?
             <button
-              (click)="navigateToLogin()"
+              (click)="navigateToRegister()"
               class="font-medium text-primary-600 hover:underline bg-transparent border-none cursor-pointer"
             >
               Register here

@@ -19,7 +19,91 @@
         >
           Create an account
         </h1>
-        <form class="space-y-4 md:space-y-6" action="#">
+        <form
+          class="space-y-4 md:space-y-6"
+          [formGroup]="registerForm"
+          (ngSubmit)="register()"
+        >
+          <ng-container>
+            <mat-form-field class="example-full-width w-full">
+              <mat-label>Email</mat-label>
+              <input
+                type="email"
+                matInput
+                formControlName="email"
+                placeholder="Ex. pat@example.com"
+              />
+            </mat-form-field>
+            @if (registerForm.get('email')?.invalid &&
+            registerForm.get('email')?.touched){
+            <ng-container>
+              @if (registerForm.get('email')?.hasError('required')){
+              <span class="text-red-500 text-xs">
+                Email is <strong>required</strong> </span
+              >} @else if(registerForm.get('email')?.hasError('email')){
+
+              <span class="text-red-500 text-xs">
+                Please enter a valid email address
+              </span>
+              } </ng-container
+            >}
+          </ng-container>
+          <ng-container>
+            <mat-form-field class="example-full-width w-full">
+              <mat-label>Password</mat-label>
+              <input
+                type="password"
+                matInput
+                formControlName="password"
+                placeholder="••••••••"
+              />
+            </mat-form-field>
+            @if (registerForm.get('password')?.invalid &&
+            registerForm.get('password')?.touched){
+
+            <ng-container>
+              @if(registerForm.get('password')?.hasError('required')){
+
+              <span *ngIf="" class="text-red-500 text-xs">
+                Password is <strong>required</strong>
+              </span>
+              } @else if(registerForm.get('password')?.hasError('password')){
+
+              <span *ngIf="" class="text-red-500 text-xs">
+                Please enter a valid password
+              </span>
+              }
+            </ng-container>
+            }
+          </ng-container>
+          <ng-container>
+            <mat-form-field class="example-full-width w-full">
+              <mat-label> Confirm Password</mat-label>
+              <input
+                type="password"
+                matInput
+                formControlName="cpassword"
+                placeholder="••••••••"
+              />
+            </mat-form-field>
+            @if (registerForm.get('cpassword')?.invalid &&
+            registerForm.get('cpassword')?.touched){
+
+            <ng-container>
+              @if(registerForm.get('cpassword')?.hasError('required')){
+
+              <span *ngIf="" class="text-red-500 text-xs">
+                Email is <strong>required</strong>
+              </span>
+              } @else if(registerForm.get('cpassword')?.hasError('cpassword')){
+
+              <span *ngIf="" class="text-red-500 text-xs">
+                Please enter a valid password
+              </span>
+              }
+            </ng-container>
+            }
+          </ng-container>
           <div>
             <label
               for="email"

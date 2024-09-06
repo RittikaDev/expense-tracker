@@ -10,7 +10,7 @@ import { Router } from '@angular/router';
 export class LoginComponent {
   loginForm: FormGroup = new FormGroup({});
 
-  navigateToLogin() {
+  navigateToRegister() {
     this.router.navigate(['/expense-tracker/register']);
   }
 
