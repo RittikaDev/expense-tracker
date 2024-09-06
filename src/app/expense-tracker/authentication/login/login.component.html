@@ -34,25 +34,19 @@
                 placeholder="Ex. pat@example.com"
               />
             </mat-form-field>
-            <ng-container
-              *ngIf="
-                loginForm.get('email')?.invalid &&
-                loginForm.get('email')?.touched
-              "
-            >
-              <span
-                *ngIf="loginForm.get('email')?.hasError('required')"
-                class="text-red-500 text-xs"
-              >
-                Email is <strong>required</strong>
-              </span>
-              <span
-                *ngIf="loginForm.get('email')?.hasError('email')"
-                class="text-red-500 text-xs"
-              >
+            @if (loginForm.get('email')?.invalid &&
+            loginForm.get('email')?.touched){
+            <ng-container>
+              @if (loginForm.get('email')?.hasError('required')){
+              <span class="text-red-500 text-xs">
+                Email is <strong>required</strong> </span
+              >} @else if(loginForm.get('email')?.hasError('email')){
+
+              <span class="text-red-500 text-xs">
                 Please enter a valid email address
               </span>
-            </ng-container>
+              } </ng-container
+            >}
           </ng-container>
           <ng-container>
             <mat-form-field class="example-full-width w-full">
@@ -64,25 +58,23 @@
                 placeholder="••••••••"
               />
             </mat-form-field>
-            <ng-container
-              *ngIf="
-                loginForm.get('password')?.invalid &&
-                loginForm.get('password')?.touched
-              "
-            >
-              <span
-                *ngIf="loginForm.get('password')?.hasError('required')"
-                class="text-red-500 text-xs"
-              >
+            @if (loginForm.get('password')?.invalid &&
+            loginForm.get('password')?.touched){
+
+            <ng-container>
+              @if(loginForm.get('password')?.hasError('required')){
+
+              <span *ngIf="" class="text-red-500 text-xs">
                 Email is <strong>required</strong>
               </span>
-              <span
-                *ngIf="loginForm.get('password')?.hasError('password')"
-                class="text-red-500 text-xs"
-              >
+              } @else if(loginForm.get('password')?.hasError('password')){
+
+              <span *ngIf="" class="text-red-500 text-xs">
                 Please enter a valid password
               </span>
+              }
             </ng-container>
+            }
           </ng-container>
 
           <div class="flex items-start">
