@@ -1,8 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, signal } from '@angular/core';
 import {
   AbstractControl,
   FormBuilder,
-  FormControl,
   FormGroup,
   Validators,
 } from '@angular/forms';
@@ -17,6 +16,8 @@ import { PasswordMatchValidatorService } from './../password-match-validator.ser
 })
 export class RegistrationComponent {
   registerForm: FormGroup = new FormGroup({});
+  hide = signal(true); // SHOW/HIDE PASSWORD
+  hideConPass = signal(true); // SHOW/HIDE CONFIRM PASSWORD
 
   navigateToLogin() {
     this.router.navigate(['/expense-tracker/login']);
@@ -48,6 +49,15 @@ export class RegistrationComponent {
         ),
       }
     );
+  }
+
+  showHidePass(event: MouseEvent) {
+    this.hide.set(!this.hide());
+    event.preventDefault();
+  }
+  showHideConPass(event: MouseEvent) {
+    this.hideConPass.set(!this.hideConPass());
+    event.preventDefault();
   }
 
   get confirmPasswordControl() {

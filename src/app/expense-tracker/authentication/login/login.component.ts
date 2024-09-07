@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, signal } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 
@@ -9,6 +9,7 @@ import { Router } from '@angular/router';
 })
 export class LoginComponent {
   loginForm: FormGroup = new FormGroup({});
+  hide = signal(true); // SHOW/HIDE PASSWORD
 
   navigateToRegister() {
     this.router.navigate(['/expense-tracker/register']);
@@ -21,6 +22,11 @@ export class LoginComponent {
       email: ['', [Validators.required, Validators.email]],
       password: ['', Validators.required],
     });
+  }
+
+  clickEvent(event: MouseEvent) {
+    this.hide.set(!this.hide());
+    event.preventDefault();
   }
   logIn() {
     console.log(this.loginForm.value);

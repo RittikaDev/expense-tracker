@@ -72,3 +72,10 @@
   .mdc-notched-outline__notch {
   border-right: 0;
 }
+::ng-deep .mat-mdc-icon-button.mat-mdc-button-base {
+  padding: 0px;
+  height: 35px;
+}
+.pass-icon {
+  font-size: 22px;
+}

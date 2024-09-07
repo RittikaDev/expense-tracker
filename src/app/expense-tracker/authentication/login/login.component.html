@@ -49,17 +49,26 @@
             >}
           </ng-container>
           <ng-container>
-            <mat-form-field
-              class="example-full-width w-full"
-              appearance="outline"
-            >
+            <mat-form-field class="w-full" appearance="outline">
               <mat-label>Password</mat-label>
               <input
                 type="password"
                 matInput
                 formControlName="password"
                 placeholder="••••••••"
+                [type]="hide() ? 'password' : 'text'"
               />
+              <button
+                mat-icon-button
+                matSuffix
+                (click)="clickEvent($event)"
+                [attr.aria-label]="'Hide password'"
+                [attr.aria-pressed]="hide()"
+              >
+                <mat-icon class="pass-icon">{{
+                  hide() ? "visibility_off" : "visibility"
+                }}</mat-icon>
+              </button>
             </mat-form-field>
             @if (loginForm.get('password')?.invalid &&
             loginForm.get('password')?.touched){

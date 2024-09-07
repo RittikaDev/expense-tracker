@@ -11,8 +11,6 @@ export class PasswordMatchValidatorService {
       const passwordControl = formGroup.get(password);
       const confirmPasswordControl = formGroup.get(confirmPassword);
 
-      console.log(passwordControl, confirmPassword);
-
       if (!passwordControl || !confirmPasswordControl) return null;
 
       if (
