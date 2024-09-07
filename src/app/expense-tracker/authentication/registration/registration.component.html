@@ -25,7 +25,10 @@
           (ngSubmit)="register()"
         >
           <ng-container>
-            <mat-form-field class="example-full-width w-full">
+            <mat-form-field
+              class="example-full-width w-full"
+              appearance="outline"
+            >
               <mat-label>Email</mat-label>
               <input
                 type="email"
@@ -49,7 +52,10 @@
             >}
           </ng-container>
           <ng-container>
-            <mat-form-field class="example-full-width w-full">
+            <mat-form-field
+              class="example-full-width w-full"
+              appearance="outline"
+            >
               <mat-label>Password</mat-label>
               <input
                 type="password"
@@ -60,51 +66,60 @@
             </mat-form-field>
             @if (registerForm.get('password')?.invalid &&
             registerForm.get('password')?.touched){
-
             <ng-container>
-              @if(registerForm.get('password')?.hasError('required')){
+              @if (registerForm.get('password')?.hasError('required')){
+              <span class="text-red-500 text-xs">
+                Password is <strong>required</strong> </span
+              >} @else if(registerForm.get('password')?.hasError('minlength')){
 
-              <span *ngIf="" class="text-red-500 text-xs">
-                Password is <strong>required</strong>
+              <span class="text-red-500 text-xs">
+                Password must be at least 6 characters long.
               </span>
-              } @else if(registerForm.get('password')?.hasError('password')){
+              } @else if(registerForm.get('password')?.hasError('maxlength')){
 
-              <span *ngIf="" class="text-red-500 text-xs">
-                Please enter a valid password
+              <span class="text-red-500 text-xs">
+                Password must be at least 20 characters long.
               </span>
-              }
-            </ng-container>
-            }
+              } @else if(registerForm.get('password')?.hasError('pattern')){
+
+              <span class="text-red-500 text-xs">
+                Password must contain at least one number, one lowercase letter,
+                and no special characters.
+              </span>
+              } </ng-container
+            >}
           </ng-container>
           <ng-container>
-            <mat-form-field class="example-full-width w-full">
+            <mat-form-field
+              class="example-full-width w-full"
+              appearance="outline"
+            >
               <mat-label> Confirm Password</mat-label>
               <input
                 type="password"
                 matInput
-                formControlName="cpassword"
+                formControlName="confirmPassword"
                 placeholder="••••••••"
               />
             </mat-form-field>
-            @if (registerForm.get('cpassword')?.invalid &&
-            registerForm.get('cpassword')?.touched){
+            @if (registerForm.get('confirmPassword')?.invalid &&
+            registerForm.get('confirmPassword')?.touched){
 
             <ng-container>
-              @if(registerForm.get('cpassword')?.hasError('required')){
+              @if(registerForm.get('confirmPassword')?.hasError('required')){
 
-              <span *ngIf="" class="text-red-500 text-xs">
-                Email is <strong>required</strong>
+              <span class="text-red-500 text-xs">
+                Confirm-password is <strong>required</strong>
               </span>
-              } @else if(registerForm.get('cpassword')?.hasError('cpassword')){
-
-              <span *ngIf="" class="text-red-500 text-xs">
-                Please enter a valid password
+              } @else if (confirmPasswordControl?.invalid) {
+              <span class="text-red-500 text-xs">
+                Passwords <strong>do not match</strong>
               </span>
               }
             </ng-container>
             }
           </ng-container>
-          <div>
+          <!-- <div>
             <label
               for="email"
               class="block mb-2 text-sm font-medium text-gray-900"
@@ -148,7 +163,7 @@
               class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"
               required=""
             />
-          </div>
+          </div> -->
           <div class="flex items-start">
             <div class="flex items-center h-5">
               <input
