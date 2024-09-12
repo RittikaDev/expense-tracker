@@ -13,7 +13,6 @@ import { MatInputModule } from '@angular/material/input';
 describe('LoginComponent', () => {
   let component: LoginComponent;
   let fixture: ComponentFixture<LoginComponent>;
-  let router: Router;
   let mockRouter: any;
   // SETTING UP THE TESTING MODULE AND ASYNCHRONOUS INITIALIZATION
   beforeEach(async () => {
