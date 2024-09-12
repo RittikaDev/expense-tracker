@@ -10,6 +10,7 @@ import { LoginComponent } from './authentication/login/login.component';
 
 import { MatButtonModule } from '@angular/material/button';
 import { MatInputModule } from '@angular/material/input';
+import { MatIconModule } from '@angular/material/icon';
 
 @NgModule({
   declarations: [ThemeSwitchComponent, LoginComponent, RegistrationComponent],
@@ -22,6 +23,7 @@ import { MatInputModule } from '@angular/material/input';
 
     MatButtonModule,
     MatInputModule,
+    MatIconModule,
   ],
 })
 export class ExpenseTrackerModule {}
