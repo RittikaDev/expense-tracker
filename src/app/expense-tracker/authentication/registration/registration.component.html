@@ -26,6 +26,25 @@
         >
           <ng-container>
             <mat-form-field class="w-full" appearance="outline">
+              <mat-label>Username</mat-label>
+              <input
+                type="text"
+                matInput
+                formControlName="username"
+                placeholder="Username"
+              />
+            </mat-form-field>
+            @if (registerForm.get('username')?.invalid &&
+            registerForm.get('username')?.touched){
+            <ng-container>
+              @if (registerForm.get('username')?.hasError('required')){
+              <span class="text-red-500 text-xs">
+                username is <strong>required</strong> </span
+              >} </ng-container
+            >}
+          </ng-container>
+          <ng-container>
+            <mat-form-field class="w-full" appearance="outline">
               <mat-label>Email</mat-label>
               <input
                 type="email"

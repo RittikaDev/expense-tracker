@@ -12,6 +12,11 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatInputModule } from '@angular/material/input';
 import { MatIconModule } from '@angular/material/icon';
 
+import { environment } from '../../environments/environment';
+
+import { AngularFireModule } from '@angular/fire/compat';
+import { AngularFireAuthModule } from '@angular/fire/compat/auth';
+
 @NgModule({
   declarations: [ThemeSwitchComponent, LoginComponent, RegistrationComponent],
   imports: [
@@ -24,6 +29,9 @@ import { MatIconModule } from '@angular/material/icon';
     MatButtonModule,
     MatInputModule,
     MatIconModule,
+
+    AngularFireModule.initializeApp(environment.firebaseConfig),
+    AngularFireAuthModule,
   ],
 })
 export class ExpenseTrackerModule {}

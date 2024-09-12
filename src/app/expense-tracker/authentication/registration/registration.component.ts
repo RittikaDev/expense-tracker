@@ -8,6 +8,7 @@ import {
 import { Router } from '@angular/router';
 
 import { PasswordMatchValidatorService } from './../password-match-validator.service';
+import { AuthenticationService } from '../../services/authentication.service';
 
 @Component({
   selector: 'app-registration',
@@ -25,12 +26,14 @@ export class RegistrationComponent {
   constructor(
     private router: Router,
     private fb: FormBuilder,
-    private passValidator: PasswordMatchValidatorService
+    private passValidator: PasswordMatchValidatorService,
+    private authService: AuthenticationService
   ) {}
 
   ngOnInit() {
     this.registerForm = this.fb.group(
       {
+        username: ['', [Validators.required]],
         email: ['', [Validators.required, Validators.email]],
         password: [
           '',
@@ -73,6 +76,15 @@ export class RegistrationComponent {
   }
 
   register() {
-    console.log(this.registerForm.value);
+    // console.log(this.registerForm.value);
+    const rawVal = this.registerForm.getRawValue();
+    this.authService
+      .register(rawVal.email, rawVal.username, rawVal.password)
+      .subscribe({
+        next: (res) => {
+          console.log(res);
+        },
+        error: () => {},
+      });
   }
 }
