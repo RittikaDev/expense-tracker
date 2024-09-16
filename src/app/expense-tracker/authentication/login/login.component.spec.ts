@@ -9,11 +9,14 @@ import { LoginComponent } from './login.component';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
+import { AuthenticationService } from '../../services/authentication.service';
+import { ToastrService } from 'ngx-toastr';
 
 describe('LoginComponent', () => {
   let component: LoginComponent;
   let fixture: ComponentFixture<LoginComponent>;
   let mockRouter: any;
+  let mockAuthService: any;
   // SETTING UP THE TESTING MODULE AND ASYNCHRONOUS INITIALIZATION
   beforeEach(async () => {
     // MOCK ROUTER WITH A SPY FOR navigate
@@ -29,7 +32,12 @@ describe('LoginComponent', () => {
         MatIconModule,
         BrowserAnimationsModule,
       ],
-      providers: [FormBuilder, { provide: Router, useValue: mockRouter }],
+      providers: [
+        FormBuilder,
+        { provide: Router, useValue: mockRouter },
+        { provide: AuthenticationService, useValue: mockAuthService },
+        { provide: ToastrService, useValue: mockAuthService },
+      ],
     }).compileComponents();
 
     // INSTANCE-SPECIFIC SETUP AND RUNNING INITIALIZATION CODE FOR THE COMPONENT
@@ -46,8 +54,8 @@ describe('LoginComponent', () => {
   });
 
   it('should create the login form with email and password controls', () => {
-    expect(component.loginForm.contains('email')).toBeTruthy();
-    expect(component.loginForm.contains('password')).toBeTruthy();
+    expect(component.loginForm.get('email')).toBeTruthy();
+    expect(component.loginForm.get('password')).toBeTruthy();
   });
 
   it('should mark email control as required', () => {
@@ -67,22 +75,6 @@ describe('LoginComponent', () => {
     expect(mockRouter.navigate).toHaveBeenCalledWith([
       '/expense-tracker/register',
     ]);
-  });
-
-  it('should log the form values on logIn function', () => {
-    spyOn(console, 'log');
-
-    component.loginForm.setValue({
-      email: 'test@example.com',
-      password: '123456',
-    });
-
-    component.logIn();
-
-    expect(console.log).toHaveBeenCalledWith({
-      email: 'test@example.com',
-      password: '123456',
-    });
   });
 
   it('should toggle password visibility when clickEvent is called', () => {

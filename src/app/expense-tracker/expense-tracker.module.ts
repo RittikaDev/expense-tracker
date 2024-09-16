@@ -12,6 +12,8 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatInputModule } from '@angular/material/input';
 import { MatIconModule } from '@angular/material/icon';
 
+import { ToastrModule } from 'ngx-toastr';
+
 import { environment } from '../../environments/environment';
 
 import { AngularFireModule } from '@angular/fire/compat';
@@ -29,6 +31,8 @@ import { AngularFireAuthModule } from '@angular/fire/compat/auth';
     MatButtonModule,
     MatInputModule,
     MatIconModule,
+
+    ToastrModule.forRoot(),
 
     AngularFireModule.initializeApp(environment.firebaseConfig),
     AngularFireAuthModule,

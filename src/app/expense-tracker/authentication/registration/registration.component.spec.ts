@@ -10,14 +10,19 @@ import { PasswordMatchValidatorService } from '../password-match-validator.servi
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
+import { AuthenticationService } from '../../services/authentication.service';
 
 describe('RegistrationComponent', () => {
   let component: RegistrationComponent;
   let fixture: ComponentFixture<RegistrationComponent>;
   let mockRouter: any;
+  let mockAuthService: any;
 
   beforeEach(async () => {
     mockRouter = jasmine.createSpyObj('Router', ['navigate']);
+    mockAuthService = jasmine.createSpyObj('AuthenticationService', [
+      'register',
+    ]);
 
     await TestBed.configureTestingModule({
       declarations: [RegistrationComponent],
@@ -32,6 +37,7 @@ describe('RegistrationComponent', () => {
         FormBuilder,
         PasswordMatchValidatorService, // Provide your service here
         { provide: Router, useValue: mockRouter },
+        { provide: AuthenticationService, useValue: mockAuthService },
       ],
     }).compileComponents();
 
@@ -44,7 +50,7 @@ describe('RegistrationComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should create the register form with email, passowrd and confirm password controls', () => {
+  it('should create the register form with email, password, and confirm password controls', () => {
     expect(component.registerForm.contains('email')).toBeTruthy();
     expect(component.registerForm.contains('password')).toBeTruthy();
     expect(component.registerForm.contains('confirmPassword')).toBeTruthy();
@@ -55,12 +61,14 @@ describe('RegistrationComponent', () => {
     emailControl?.setValue('');
     expect(emailControl?.hasError('required')).toBeTruthy();
   });
-  it('should mark passowrd control as required', () => {
+
+  it('should mark password control as required', () => {
     const passControl = component.registerForm.get('password');
     passControl?.setValue('');
     expect(passControl?.hasError('required')).toBeTruthy();
   });
-  it('should mark confirm passowrd control as required', () => {
+
+  it('should mark confirm password control as required', () => {
     const confirmPassControl = component.registerForm.get('confirmPassword');
     confirmPassControl?.setValue('');
     expect(confirmPassControl?.hasError('required')).toBeTruthy();
@@ -71,11 +79,13 @@ describe('RegistrationComponent', () => {
     passControl?.setValue('12345');
     expect(passControl?.hasError('minlength')).toBeTruthy();
   });
+
   it('should limit password to a maximum of 20 characters', () => {
     const passControl = component.registerForm.get('password');
     passControl?.setValue('a'.repeat(21));
     expect(passControl?.hasError('maxlength')).toBeTruthy();
   });
+
   it('should check if passwords match', () => {
     const passControl = component.registerForm.get('password');
     const confirmPassControl = component.registerForm.get('confirmPassword');
@@ -102,20 +112,5 @@ describe('RegistrationComponent', () => {
     expect(mockRouter.navigate).toHaveBeenCalledWith([
       '/expense-tracker/login',
     ]);
-  });
-
-  it('should log form values on register', () => {
-    const logSpy = spyOn(console, 'log');
-    component.registerForm.setValue({
-      email: 'test@example.com',
-      password: 'password123',
-      confirmPassword: 'password123',
-    });
-    component.register();
-    expect(logSpy).toHaveBeenCalledWith({
-      email: 'test@example.com',
-      password: 'password123',
-      confirmPassword: 'password123',
-    });
   });
 });

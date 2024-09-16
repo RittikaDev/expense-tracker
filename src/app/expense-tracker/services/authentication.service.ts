@@ -35,9 +35,9 @@ export class AuthenticationService {
     const loginPromise = this.firebaseAuth
       .signInWithEmailAndPassword(email, password)
       .then((result: any) => {
-        this.ngZone.run(() => {
-          this.router.navigate(['/dashboard']);
-        });
+        // this.ngZone.run(() => {
+        //   this.router.navigate(['/dashboard']);
+        // });
         return result.user;
       })
       .catch((error) => {

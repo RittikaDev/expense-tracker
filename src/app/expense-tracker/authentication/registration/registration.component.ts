@@ -76,7 +76,6 @@ export class RegistrationComponent {
   }
 
   register() {
-    // console.log(this.registerForm.value);
     const rawVal = this.registerForm.getRawValue();
     this.authService
       .register(rawVal.email, rawVal.username, rawVal.password)

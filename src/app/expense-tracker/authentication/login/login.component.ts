@@ -2,6 +2,7 @@ import { Component, signal } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthenticationService } from '../../services/authentication.service';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-login',
@@ -19,7 +20,8 @@ export class LoginComponent {
   constructor(
     private router: Router,
     private fb: FormBuilder,
-    private authService: AuthenticationService
+    private authService: AuthenticationService,
+    private toastr: ToastrService
   ) {}
 
   ngOnInit() {
@@ -38,6 +40,7 @@ export class LoginComponent {
     this.authService.login(rawVal.email, rawVal.password).subscribe({
       next: (res: any) => {
         console.log('User logged in:', res.displayName);
+        this.toastr.success(`Welcome back ${res.displayName}`, 'Success');
       },
       error: (err: any) => {
         console.error('Error during login:', err);
