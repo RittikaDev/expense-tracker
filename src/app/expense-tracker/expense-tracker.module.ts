@@ -18,9 +18,10 @@ import { environment } from '../../environments/environment';
 
 import { AngularFireModule } from '@angular/fire/compat';
 import { AngularFireAuthModule } from '@angular/fire/compat/auth';
+import { SideNavComponent } from './dashboard/side-nav/side-nav.component';
 
 @NgModule({
-  declarations: [ThemeSwitchComponent, LoginComponent, RegistrationComponent],
+  declarations: [ThemeSwitchComponent, LoginComponent, RegistrationComponent, SideNavComponent],
   imports: [
     CommonModule,
     FormsModule,
