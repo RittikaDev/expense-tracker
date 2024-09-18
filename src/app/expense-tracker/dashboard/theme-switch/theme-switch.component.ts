@@ -15,10 +15,7 @@ export class ThemeSwitchComponent {
   constructor() {}
 
   ngOnInit() {
-    theme$.subscribe((theme) => {
-      this.theme = theme;
-      console.log(theme);
-    });
+    theme$.subscribe((theme) => (this.theme = theme));
   }
 
   handleThemeChange() {

@@ -1,6 +1,8 @@
-import { Component } from '@angular/core';
+import { Component, effect } from '@angular/core';
 import { ITheme, theme$ } from '../../../interfaces/theme-switch';
 import { Router } from '@angular/router';
+import { AuthenticationService } from '../../services/authentication.service';
+import { NgxSpinnerService } from 'ngx-spinner';
 
 @Component({
   selector: 'app-side-nav',
@@ -9,15 +11,29 @@ import { Router } from '@angular/router';
 })
 export class SideNavComponent {
   isDropdownOpen = false;
-
   theme: ITheme = 'dark';
-  constructor(private router: Router) {}
+
+  userLoggedIn: string = '';
+  userEmail: string = '';
+
+  constructor(
+    private router: Router,
+    private authService: AuthenticationService,
+    private spinner: NgxSpinnerService
+  ) {
+    effect(() => {
+      const user = this.authService.getUser();
+      if (user && user.displayName) {
+        this.userLoggedIn = user.displayName;
+        this.userEmail = user.email;
+      }
+    });
+
+    console.log('User Logged In: ', this.userLoggedIn);
+  }
 
   ngOnInit() {
-    theme$.subscribe((theme) => {
-      console.log(theme);
-      this.theme = theme;
-    });
+    theme$.subscribe((theme) => (this.theme = theme));
   }
 
   // TOGGLE EVENTS
@@ -36,7 +52,11 @@ export class SideNavComponent {
   navigateToHistory() {
     this.router.navigate(['expense-tracker/history']);
   }
-  navigateToLogOut() {
-    this.router.navigate(['expense-tracker/logOut']);
+  navigateToEarrnings() {
+    this.router.navigate(['expense-tracker/earrnings']);
+  }
+
+  logOut() {
+    this.authService.logOut();
   }
 }

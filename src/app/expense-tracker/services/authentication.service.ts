@@ -1,18 +1,31 @@
-import { Injectable, NgZone } from '@angular/core';
+import { Injectable, NgZone, signal } from '@angular/core';
+import { Router } from '@angular/router';
+
 import { updateProfile, UserCredential } from '@angular/fire/auth';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
-import { Router } from '@angular/router';
+
+import { ToastrService } from 'ngx-toastr';
 import { from, Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AuthenticationService {
+  User = signal<{ email: string; displayName: string }>({
+    email: sessionStorage.getItem('email') || '',
+    displayName: sessionStorage.getItem('displayName') || '',
+  });
+
   constructor(
     private firebaseAuth: AngularFireAuth,
     public ngZone: NgZone,
-    private router: Router
+    private router: Router,
+    private toastr: ToastrService
   ) {}
+
+  getUser() {
+    return this.User();
+  }
 
   register(
     email: string,
@@ -38,6 +51,10 @@ export class AuthenticationService {
         this.ngZone.run(() => {
           this.router.navigate(['expense-tracker/side-nav']);
         });
+        const displayName = result.user.displayName;
+        sessionStorage.setItem('email', email);
+        sessionStorage.setItem('displayName', displayName);
+        this.User.update(() => ({ email, displayName }));
         return result.user;
       })
       .catch((error) => {
@@ -45,5 +62,18 @@ export class AuthenticationService {
       });
 
     return from(loginPromise);
+  }
+
+  logOut() {
+    this.firebaseAuth.signOut().then(
+      () => {
+        sessionStorage.removeItem('email');
+        sessionStorage.removeItem('displayName');
+        this.ngZone.run(() => {
+          this.router.navigate(['expense-tracker/login']);
+        });
+      },
+      (err) => this.toastr.error(err.message)
+    );
   }
 }

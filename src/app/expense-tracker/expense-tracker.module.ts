@@ -13,6 +13,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatIconModule } from '@angular/material/icon';
 
 import { ToastrModule } from 'ngx-toastr';
+import { NgxSpinnerModule } from 'ngx-spinner';
 
 import { environment } from '../../environments/environment';
 
@@ -21,7 +22,12 @@ import { AngularFireAuthModule } from '@angular/fire/compat/auth';
 import { SideNavComponent } from './dashboard/side-nav/side-nav.component';
 
 @NgModule({
-  declarations: [ThemeSwitchComponent, LoginComponent, RegistrationComponent, SideNavComponent],
+  declarations: [
+    ThemeSwitchComponent,
+    LoginComponent,
+    RegistrationComponent,
+    SideNavComponent,
+  ],
   imports: [
     CommonModule,
     FormsModule,
@@ -34,6 +40,7 @@ import { SideNavComponent } from './dashboard/side-nav/side-nav.component';
     MatIconModule,
 
     ToastrModule.forRoot(),
+    NgxSpinnerModule.forRoot(),
 
     AngularFireModule.initializeApp(environment.firebaseConfig),
     AngularFireAuthModule,

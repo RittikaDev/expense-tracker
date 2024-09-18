@@ -3,6 +3,8 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthenticationService } from '../../services/authentication.service';
 import { ToastrService } from 'ngx-toastr';
+import { NgxSpinnerService } from 'ngx-spinner';
+import { finalize } from 'rxjs';
 
 @Component({
   selector: 'app-login',
@@ -21,7 +23,8 @@ export class LoginComponent {
     private router: Router,
     private fb: FormBuilder,
     private authService: AuthenticationService,
-    private toastr: ToastrService
+    private toastr: ToastrService,
+    private spinner: NgxSpinnerService
   ) {}
 
   ngOnInit() {
@@ -36,16 +39,16 @@ export class LoginComponent {
     event.preventDefault();
   }
   logIn() {
+    this.spinner.show();
     const rawVal = this.loginForm.getRawValue();
-    this.authService.login(rawVal.email, rawVal.password).subscribe({
-      next: (res: any) => {
-        console.log('User logged in:', res.displayName);
-        this.toastr.success(`Welcome back ${res.displayName}`, 'Success');
-      },
-      error: (err: any) => {
-        console.error('Error during login:', err);
-      },
-    });
+    this.authService
+      .login(rawVal.email, rawVal.password)
+      .pipe(finalize(() => this.spinner.hide()))
+      .subscribe({
+        next: (res: any) =>
+          this.toastr.success(`Welcome back ${res.displayName}`, 'Success'),
+        error: () => this.toastr.error(`Failed to log in`, 'Error'),
+      });
   }
   // admin12345
   //admin@gmail.com
