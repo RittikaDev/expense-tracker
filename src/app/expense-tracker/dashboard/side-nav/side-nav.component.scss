@@ -4,17 +4,15 @@
   position: absolute;
   left: 25%;
   top: 50%;
-  width: 32px;
+  width: 20px;
   height: 3px;
   background-color: black;
   transition: all 400ms cubic-bezier(0.84, 0.06, 0.52, 1.8);
 }
-
 .icon-1 {
   transform: translateY(-8px);
   animation-delay: 100ms;
 }
-
 .icon-3 {
   transform: translateY(8px);
   animation-delay: 250ms;
@@ -22,30 +20,14 @@
 
 .hamburger-icon {
   position: absolute;
-  height: 60px;
-  width: 60px;
-  top: 10%;
-  left: 3%;
+  height: 40px;
+  width: 40px;
   z-index: 1000;
   cursor: pointer;
   border-radius: 50%;
   transition: all 0.2s ease-in-out;
-  background: rgba(255, 255, 255, 0.2);
-  // background: green;
-  // width: auto;
-  // height: 50px;
-  // overflow: hidden;
   &:hover {
-    // .icon-1 {
-    //   transform: rotate(40deg);
-    // }
-    // .icon-3 {
-    //   transform: rotate(-40deg);
-    // }
-    // .icon-2 {
-    //   opacity: 0;
-    // }
-    transform: scale(1.2);
+    transform: scale(1.1);
     box-shadow: 0px 0px 30px rgba(0, 0, 0, 0.1);
   }
 }
@@ -60,20 +42,13 @@
   opacity: 0;
 }
 
-.clear {
-  clear: both;
-}
-
 @keyframes slideIn {
   0% {
     width: 0%;
-    // transform: scale(.3);
     opacity: 0;
   }
-
   100% {
     width: 50%;
-    // transform:scale(1);
     opacity: 1;
   }
 }
@@ -89,19 +64,5 @@
   100% {
     transform: translateY(0%);
     opacity: 1;
-  }
-}
-
-.content {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 100%;
-  transform: translate(-50%, -50%);
-  text-align: center;
-  h1 {
-    font-size: 70px;
-    animation: shotup 600ms ease-in-out;
-    animation-delay: 300ms;
   }
 }

@@ -11,6 +11,8 @@ import { NgxSpinnerService } from 'ngx-spinner';
 })
 export class SideNavComponent {
   isDropdownOpen = false;
+  isButtonVisible: boolean = false;
+
   theme: ITheme = 'dark';
 
   userLoggedIn: string = '';
@@ -58,5 +60,17 @@ export class SideNavComponent {
 
   logOut() {
     this.authService.logOut();
+  }
+
+  isIcon1Active = false;
+  isIcon2Active = false;
+  isIcon3Active = false;
+
+  toggleMenu() {
+    this.isIcon1Active = !this.isIcon1Active;
+    this.isIcon2Active = !this.isIcon2Active;
+    this.isIcon3Active = !this.isIcon3Active;
+    this.isButtonVisible = true;
+    this.toggleSidebar();
   }
 }

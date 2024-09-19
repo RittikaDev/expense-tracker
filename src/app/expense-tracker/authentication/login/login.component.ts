@@ -18,6 +18,9 @@ export class LoginComponent {
   navigateToRegister() {
     this.router.navigate(['/expense-tracker/register']);
   }
+  navigateToForgotPass() {
+    this.router.navigate(['/expense-tracker/forgot-pass']);
+  }
 
   constructor(
     private router: Router,

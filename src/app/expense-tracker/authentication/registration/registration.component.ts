@@ -9,6 +9,7 @@ import { Router } from '@angular/router';
 
 import { PasswordMatchValidatorService } from './../password-match-validator.service';
 import { AuthenticationService } from '../../services/authentication.service';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-registration',
@@ -25,6 +26,7 @@ export class RegistrationComponent {
   }
   constructor(
     private router: Router,
+    private toastr: ToastrService,
     private fb: FormBuilder,
     private passValidator: PasswordMatchValidatorService,
     private authService: AuthenticationService
@@ -69,9 +71,9 @@ export class RegistrationComponent {
   public getConfirmPasswordError() {
     const control: AbstractControl | null = this.confirmPasswordControl;
     return control?.hasError('required')
-      ? 'Please confirm the  password'
+      ? 'Please confirm the password'
       : control?.hasError('passwordMismatch')
-      ? 'The passwords do not match'
+      ? 'Passwords do not match'
       : '';
   }
 
@@ -80,10 +82,12 @@ export class RegistrationComponent {
     this.authService
       .register(rawVal.email, rawVal.username, rawVal.password)
       .subscribe({
-        next: (res) => {
-          console.log(res);
-        },
-        error: () => {},
+        next: (res: any) =>
+          this.toastr.success(
+            `Welcome to Expense Tracker ${res.displayName}`,
+            'Success'
+          ),
+        error: () => this.toastr.error(`Failed to register`, 'Error'),
       });
   }
 }

@@ -1,11 +1,11 @@
 import { Injectable, NgZone, signal } from '@angular/core';
 import { Router } from '@angular/router';
+import { from, Observable } from 'rxjs';
 
 import { updateProfile, UserCredential } from '@angular/fire/auth';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
 
 import { ToastrService } from 'ngx-toastr';
-import { from, Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
@@ -23,9 +23,7 @@ export class AuthenticationService {
     private toastr: ToastrService
   ) {}
 
-  getUser() {
-    return this.User();
-  }
+  getUser = () => this.User();
 
   register(
     email: string,
@@ -38,12 +36,19 @@ export class AuthenticationService {
         return updateProfile(userCredential.user, {
           displayName: displayName,
         }).then(() => {
+          this.ngZone.run(() => {
+            this.router.navigate(['expense-tracker/side-nav']);
+          });
+          sessionStorage.setItem('email', email);
+          sessionStorage.setItem('displayName', displayName);
+          this.User.update(() => ({ email, displayName }));
           return userCredential.user.multiFactor.user;
         });
       });
 
     return from(promise);
   }
+
   login(email: string, password: string): any {
     const loginPromise = this.firebaseAuth
       .signInWithEmailAndPassword(email, password)
@@ -62,6 +67,17 @@ export class AuthenticationService {
       });
 
     return from(loginPromise);
+  }
+
+  forgotPassword(email: string) {
+    this.firebaseAuth.sendPasswordResetEmail(email).then(
+      () =>
+        this.toastr.info(
+          'Please check your email to reset password',
+          'Information'
+        ),
+      () => this.toastr.error('Failed to reset password', 'Error')
+    );
   }
 
   logOut() {

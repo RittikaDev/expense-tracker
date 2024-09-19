@@ -20,6 +20,7 @@ import { environment } from '../../environments/environment';
 import { AngularFireModule } from '@angular/fire/compat';
 import { AngularFireAuthModule } from '@angular/fire/compat/auth';
 import { SideNavComponent } from './dashboard/side-nav/side-nav.component';
+import { ForgotPasswordComponent } from './authentication/forgot-password/forgot-password.component';
 
 @NgModule({
   declarations: [
@@ -27,6 +28,7 @@ import { SideNavComponent } from './dashboard/side-nav/side-nav.component';
     LoginComponent,
     RegistrationComponent,
     SideNavComponent,
+    ForgotPasswordComponent,
   ],
   imports: [
     CommonModule,
