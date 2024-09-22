@@ -1,149 +1,100 @@
-<div
-  class="w-full max-w-md p-4 bg-white border border-gray-200 rounded-lg shadow sm:p-8 dark:bg-gray-800 dark:border-gray-700"
->
-  <div class="flex items-center justify-between mb-4">
-    <h5 class="text-xl font-bold leading-none text-gray-900 dark:text-white">
-      Latest Customers
-    </h5>
-    <a
-      href="#"
-      class="text-sm font-medium text-blue-600 hover:underline dark:text-blue-500"
+<section class="flex justify-around">
+  <section>
+    <div
+      class="w-96 max-w-md mb-6 p-4 bg-white border border-gray-200 rounded-lg shadow sm:p-6 dark:bg-gray-800 dark:border-gray-700"
     >
-      View all
-    </a>
-  </div>
-  <div class="flow-root">
-    <ul role="list" class="divide-y divide-gray-200 dark:divide-gray-700">
-      <li class="py-3 sm:py-4">
-        <div class="flex items-center">
-          <div class="flex-shrink-0">
-            <img
-              class="w-8 h-8 rounded-full"
-              src="/docs/images/people/profile-picture-1.jpg"
-              alt="Neil image"
-            />
-          </div>
-          <div class="flex-1 min-w-0 ms-4">
-            <p
-              class="text-sm font-medium text-gray-900 truncate dark:text-white"
-            >
-              Neil Sims
-            </p>
-            <p class="text-sm text-gray-500 truncate dark:text-gray-400">
-              email
-            </p>
-          </div>
-          <div
-            class="inline-flex items-center text-base font-semibold text-gray-900 dark:text-white"
-          >
-            $320
-          </div>
-        </div>
+      <div class="flex items-center justify-between mb-4">
+        <p class="text-base font-bold text-gray-900 dark:text-white">Income</p>
+        <i
+          class="fas fa-arrow-trend-up text-lg text-green-600 dark:text-green-400"
+        ></i>
+      </div>
+      <div class="flex justify-between border-t-2 border-green-200">
+        <p class="text-base text-gray-900 dark:text-white pt-3 sm:pt-3 pb-0">
+          $300
+        </p>
+        <p class="text-base text-green-700 dark:text-white pt-3 sm:pt-3 pb-0">
+          +5% from last month
+        </p>
+      </div>
+    </div>
+
+    <div
+      class="w-96 max-w-md p-4 bg-white border border-gray-200 rounded-lg shadow sm:p-6 dark:bg-gray-800 dark:border-gray-700"
+    >
+      <div class="flex items-center justify-between mb-4">
+        <p class="text-base font-bold text-gray-900 dark:text-white">Expense</p>
+        <i
+          class="fas fa-arrow-trend-down text-lg text-red-600 dark:text-red-400"
+        ></i>
+      </div>
+      <div class="flex justify-between border-t-2 border-red-200">
+        <p class="text-base text-gray-900 dark:text-white pt-3 sm:pt-3 pb-0">
+          $130
+        </p>
+        <p class="text-base text-red-700 dark:text-white pt-3 sm:pt-3 pb-0">
+          -3% from last month
+        </p>
+      </div>
+    </div>
+  </section>
+  <section class="w-1/2">
+    <ul
+      class="hidden text-sm font-medium text-center text-gray-500 rounded-lg shadow sm:flex dark:divide-gray-700 dark:text-gray-400"
+    >
+      <li class="w-full focus-within:z-10">
+        <p
+          class="inline-block w-full hover:cursor-pointer hover:bg-gray-100 p-2 text-gray-900 bg-gray-50 border-r border-gray-200 dark:border-gray-700 rounded-s-lg focus:ring-4 focus:ring-blue-300 active focus:outline-none dark:bg-gray-700 dark:text-white"
+          [ngClass]="activeIncomeTab == true ? 'bg-gray-200' : ''"
+          (click)="incomeTab()"
+        >
+          Income
+        </p>
       </li>
-      <li class="py-3 sm:py-4">
-        <div class="flex items-center">
-          <div class="flex-shrink-0">
-            <img
-              class="w-8 h-8 rounded-full"
-              src="/docs/images/people/profile-picture-3.jpg"
-              alt="Bonnie image"
-            />
-          </div>
-          <div class="flex-1 min-w-0 ms-4">
-            <p
-              class="text-sm font-medium text-gray-900 truncate dark:text-white"
-            >
-              Bonnie Green
-            </p>
-            <p class="text-sm text-gray-500 truncate dark:text-gray-400">
-              email
-            </p>
-          </div>
-          <div
-            class="inline-flex items-center text-base font-semibold text-gray-900 dark:text-white"
-          >
-            $3467
-          </div>
-        </div>
-      </li>
-      <li class="py-3 sm:py-4">
-        <div class="flex items-center">
-          <div class="flex-shrink-0">
-            <img
-              class="w-8 h-8 rounded-full"
-              src="/docs/images/people/profile-picture-2.jpg"
-              alt="Michael image"
-            />
-          </div>
-          <div class="flex-1 min-w-0 ms-4">
-            <p
-              class="text-sm font-medium text-gray-900 truncate dark:text-white"
-            >
-              Michael Gough
-            </p>
-            <p class="text-sm text-gray-500 truncate dark:text-gray-400">
-              email
-            </p>
-          </div>
-          <div
-            class="inline-flex items-center text-base font-semibold text-gray-900 dark:text-white"
-          >
-            $67
-          </div>
-        </div>
-      </li>
-      <li class="py-3 sm:py-4">
-        <div class="flex items-center">
-          <div class="flex-shrink-0">
-            <img
-              class="w-8 h-8 rounded-full"
-              src="/docs/images/people/profile-picture-4.jpg"
-              alt="Lana image"
-            />
-          </div>
-          <div class="flex-1 min-w-0 ms-4">
-            <p
-              class="text-sm font-medium text-gray-900 truncate dark:text-white"
-            >
-              Lana Byrd
-            </p>
-            <p class="text-sm text-gray-500 truncate dark:text-gray-400">
-              email
-            </p>
-          </div>
-          <div
-            class="inline-flex items-center text-base font-semibold text-gray-900 dark:text-white"
-          >
-            $367
-          </div>
-        </div>
-      </li>
-      <li class="pt-3 pb-0 sm:pt-4">
-        <div class="flex items-center">
-          <div class="flex-shrink-0">
-            <img
-              class="w-8 h-8 rounded-full"
-              src="/docs/images/people/profile-picture-5.jpg"
-              alt="Thomas image"
-            />
-          </div>
-          <div class="flex-1 min-w-0 ms-4">
-            <p
-              class="text-sm font-medium text-gray-900 truncate dark:text-white"
-            >
-              Thomes Lean
-            </p>
-            <p class="text-sm text-gray-500 truncate dark:text-gray-400">
-              email
-            </p>
-          </div>
-          <div
-            class="inline-flex items-center text-base font-semibold text-gray-900 dark:text-white"
-          >
-            $2367
-          </div>
-        </div>
+      <li class="w-full focus-within:z-10">
+        <p
+          class="inline-block w-full hover:cursor-pointer hover:bg-gray-100 p-2 text-gray-900 bg-gray-50 border-r border-gray-200 dark:border-gray-700 rounded-s-lg focus:ring-4 focus:ring-blue-300 active focus:outline-none dark:bg-gray-700 dark:text-white"
+          [ngClass]="activeExpenseTab == true ? 'bg-gray-200' : ''"
+          (click)="expenseTab()"
+        >
+          Expense
+        </p>
       </li>
     </ul>
+    <div *ngIf="activeIncomeTab || activeExpenseTab" class="dark:bg-gray-800">
+      <echarts
+        [options]="chartOptions"
+        [theme]="theme"
+        class="flex justify-center"
+        style="height: 350px"
+      ></echarts>
+    </div>
+  </section>
+</section>
+
+<section class="mt-14 mx-28 flex justify-between">
+  <div class="w-full">
+    <p class="text-lg font-bold text-gray-900 dark:text-white">
+      Financial Insights
+    </p>
+    <echarts
+      [options]="barChartOption"
+      [theme]="theme"
+      class="flex justify-center"
+      style="height: 350px"
+    ></echarts>
   </div>
-</div>
+  <div>
+    <mat-form-field appearance="outline">
+      <mat-label>Select timeframe</mat-label>
+      <select
+        matNativeControl
+        [(ngModel)]="selectedTime"
+        (change)="updateBarChart()"
+      >
+        <option value="week" selected>Weekly</option>
+        <option value="month">Monthly</option>
+      </select>
+    </mat-form-field>
+  </div>
+</section>

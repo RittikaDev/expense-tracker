@@ -103,7 +103,7 @@
     <div class="h-full px-3 pb-4 overflow-y-auto bg-white dark:bg-gray-800">
       <ul class="space-y-2 font-medium">
         <li
-          (click)="navigateToHistory()"
+          (click)="navigateToDashboard()"
           class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group"
         >
           <i
@@ -154,7 +154,13 @@
   </aside>
 </section>
 
-<div class="p-4 sm:ml-64" [attr.data-theme]="theme" class="{{ theme }}"></div>
+<div
+  class="p-4 sm:ml-64 sm:mt-20"
+  [attr.data-theme]="theme"
+  class="{{ theme }}"
+>
+  <router-outlet></router-outlet>
+</div>
 <!-- <ngx-spinner
   bdColor="rgba(0, 0, 0, 0.8)"
   size="medium"

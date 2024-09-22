@@ -18,6 +18,8 @@ export class SideNavComponent {
   userLoggedIn: string = '';
   userEmail: string = '';
 
+  commonUrl: string = 'expense-tracker/side-nav/';
+
   constructor(
     private router: Router,
     private authService: AuthenticationService,
@@ -49,7 +51,8 @@ export class SideNavComponent {
 
   // NAVIGATION
   navigateToDashboard() {
-    this.router.navigate(['expense-tracker/dashboard']);
+    console.log('Clicked');
+    this.router.navigate([`${this.commonUrl}dashboard`]);
   }
   navigateToHistory() {
     this.router.navigate(['expense-tracker/history']);
