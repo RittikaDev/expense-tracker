@@ -1,0 +1,7 @@
+::ng-deep .mat-mdc-raised-button:not(:disabled).transaction-frm-btn {
+  background-color: rgb(224 233 245);
+}
+::ng-deep .mat-mdc-raised-button:not(:disabled).transaction-save-btn {
+  background-color: #3c8dbc;
+  color: #fff;
+}

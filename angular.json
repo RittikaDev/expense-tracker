@@ -37,6 +37,9 @@
               }
             ],
             "styles": [
+              "./node_modules/jqwidgets-ng/jqwidgets/styles/jqx.material.css",
+              "./node_modules/jqwidgets-ng/jqwidgets/styles/jqx.base.css",
+              "./node_modules/jqwidgets-ng/jqwidgets/styles/jqx.energyblue.css",
               "@angular/material/prebuilt-themes/azure-blue.css",
               "./node_modules/ngx-spinner/animations/timer.css",
               "src/styles.scss"
@@ -101,6 +104,8 @@
               }
             ],
             "styles": [
+              "./node_modules/jqwidgets-ng/jqwidgets/styles/jqx.material.css",
+              "./node_modules/jqwidgets-ng/jqwidgets/styles/jqx.base.css",
               "@angular/material/prebuilt-themes/azure-blue.css",
               "src/styles.scss"
             ],

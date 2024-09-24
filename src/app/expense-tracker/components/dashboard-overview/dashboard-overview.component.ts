@@ -1,9 +1,18 @@
-import { Component, OnInit } from '@angular/core';
+import {
+  AfterViewInit,
+  Component,
+  effect,
+  ElementRef,
+  OnInit,
+  Renderer2,
+  ViewChild,
+} from '@angular/core';
 
 import { EChartsOption } from 'echarts';
 
 import { ITheme, theme$ } from '../../../interfaces/theme-switch';
 import { CoolTheme } from '../../utilities/EChartColorTheme';
+import { AuthenticationService } from '../../services/authentication.service';
 
 @Component({
   selector: 'app-dashboard-overview',
@@ -13,7 +22,9 @@ import { CoolTheme } from '../../utilities/EChartColorTheme';
     '../../authentication/login/login.component.scss',
   ],
 })
-export class DashboardOverviewComponent implements OnInit {
+export class DashboardOverviewComponent implements OnInit, AfterViewInit {
+  @ViewChild('textSection') textSection!: ElementRef;
+
   theme: ITheme = 'dark';
   coolTheme = CoolTheme;
 
@@ -22,10 +33,28 @@ export class DashboardOverviewComponent implements OnInit {
 
   selectedTime: string = 'week';
 
+  greetingMessage: string = '';
+  loggedUser: string = '';
+
   ngOnInit(): void {
     theme$.subscribe((theme) => (this.theme = theme));
     this.chartOptions = this.incomeChartOptions;
     this.updateBarChart();
+    this.setGreetingMessage();
+  }
+
+  ngAfterViewInit(): void {
+    this.resetAnimation();
+  }
+
+  constructor(
+    private authService: AuthenticationService,
+    private renderer: Renderer2
+  ) {
+    effect(() => {
+      const user = this.authService.getUser();
+      if (user && user.displayName) this.loggedUser = user.displayName;
+    });
   }
 
   chartOptions: EChartsOption = {};
@@ -83,6 +112,21 @@ export class DashboardOverviewComponent implements OnInit {
       },
     ],
   };
+
+  setGreetingMessage() {
+    const currentHour = new Date().getHours();
+    if (currentHour < 12) this.greetingMessage = 'Good morning';
+    else if (currentHour >= 12 && currentHour < 18)
+      this.greetingMessage = 'Good afternoon';
+    else this.greetingMessage = 'Good evening';
+  }
+
+  resetAnimation() {
+    const element = this.textSection.nativeElement;
+    this.renderer.removeClass(element, 'animate');
+    void element.offsetWidth;
+    this.renderer.addClass(element, 'animate');
+  }
 
   incomeTab() {
     this.activeIncomeTab = true;

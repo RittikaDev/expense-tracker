@@ -54,8 +54,8 @@ export class SideNavComponent {
     console.log('Clicked');
     this.router.navigate([`${this.commonUrl}dashboard`]);
   }
-  navigateToHistory() {
-    this.router.navigate(['expense-tracker/history']);
+  navigateToTransactions() {
+    this.router.navigate([`${this.commonUrl}transactions`]);
   }
   navigateToEarrnings() {
     this.router.navigate(['expense-tracker/earrnings']);

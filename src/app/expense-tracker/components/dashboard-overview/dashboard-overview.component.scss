@@ -1,0 +1,49 @@
+@import url("https://fonts.googleapis.com/css?family=Roboto:300");
+
+.text {
+  font-family: "Roboto";
+  height: 10vh;
+}
+
+.text div:first-of-type {
+  animation: showup 2s forwards; /* Changed to forward and removed infinite */
+}
+
+.text div:last-of-type {
+  animation: reveal 2s forwards; /* Same here */
+}
+
+.text div:last-of-type span {
+  margin-left: -355px;
+  animation: slidein 2s forwards; /* No infinite loop */
+}
+
+/* Keyframes without fade out */
+@keyframes showup {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+@keyframes slidein {
+  0% {
+    margin-left: -800px;
+  }
+  100% {
+    margin-left: 0px;
+  }
+}
+
+@keyframes reveal {
+  0% {
+    opacity: 0;
+    width: 0px;
+  }
+  100% {
+    opacity: 1;
+    width: 355px;
+  }
+}

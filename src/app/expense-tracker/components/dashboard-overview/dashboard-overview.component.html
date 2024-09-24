@@ -1,3 +1,15 @@
+<section
+  #textSection
+  class="text animate font-medium text-2xl text-gray-500 dark:text-white"
+>
+  <div class="overflow-hidden whitespace-nowrap me-2">
+    {{ greetingMessage }}, {{ loggedUser }}
+  </div>
+  <div class="text-xl whitespace-nowrap">
+    <span>Welcome to your financial insights</span>
+  </div>
+</section>
+
 <section class="flex justify-around">
   <section>
     <div
@@ -44,8 +56,12 @@
     >
       <li class="w-full focus-within:z-10">
         <p
-          class="inline-block w-full hover:cursor-pointer hover:bg-gray-100 p-2 text-gray-900 bg-gray-50 border-r border-gray-200 dark:border-gray-700 rounded-s-lg focus:ring-4 focus:ring-blue-300 active focus:outline-none dark:bg-gray-700 dark:text-white"
-          [ngClass]="activeIncomeTab == true ? 'bg-gray-200' : ''"
+          class="inline-block w-full hover:cursor-pointer rounded-s-lg p-2 border-r hover:bg-gray-100 text-gray-900 border-gray-200 dark:hover:bg-gray-400 dark:text-white dark:bg-gray-500 dark:border-gray-600"
+          [ngClass]="
+            activeIncomeTab == true
+              ? 'bg-gray-200 dark:bg-gray-500'
+              : 'bg-gray-50 dark:bg-gray-400'
+          "
           (click)="incomeTab()"
         >
           Income
@@ -53,8 +69,12 @@
       </li>
       <li class="w-full focus-within:z-10">
         <p
-          class="inline-block w-full hover:cursor-pointer hover:bg-gray-100 p-2 text-gray-900 bg-gray-50 border-r border-gray-200 dark:border-gray-700 rounded-s-lg focus:ring-4 focus:ring-blue-300 active focus:outline-none dark:bg-gray-700 dark:text-white"
-          [ngClass]="activeExpenseTab == true ? 'bg-gray-200' : ''"
+          class="inline-block w-full hover:cursor-pointer rounded-s-lg p-2 border-r hover:bg-gray-100 text-gray-900 border-gray-200 dark:hover:bg-gray-400 dark:text-white dark:border-gray-600"
+          [ngClass]="
+            activeExpenseTab == true
+              ? 'bg-gray-200 dark:bg-gray-500'
+              : 'bg-gray-50 dark:bg-gray-400'
+          "
           (click)="expenseTab()"
         >
           Expense
@@ -81,7 +101,7 @@
       [options]="barChartOption"
       [theme]="theme"
       class="flex justify-center"
-      style="height: 350px"
+      style="height: 300px"
     ></echarts>
   </div>
   <div>

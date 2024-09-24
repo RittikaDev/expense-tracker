@@ -7,6 +7,10 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatInputModule } from '@angular/material/input';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTabsModule } from '@angular/material/tabs';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatNativeDateModule } from '@angular/material/core';
+
+import { jqxGridModule } from 'jqwidgets-ng/jqxgrid';
 
 import { ToastrModule } from 'ngx-toastr';
 import { NgxSpinnerModule } from 'ngx-spinner';
@@ -27,6 +31,7 @@ import { ForgotPasswordComponent } from './authentication/forgot-password/forgot
 
 import { SideNavComponent } from './dashboard/side-nav/side-nav.component';
 import { DashboardOverviewComponent } from './components/dashboard-overview/dashboard-overview.component';
+import { TransactionsComponent } from './components/transactions/transactions.component';
 
 @NgModule({
   declarations: [
@@ -36,6 +41,7 @@ import { DashboardOverviewComponent } from './components/dashboard-overview/dash
     ForgotPasswordComponent,
     SideNavComponent,
     DashboardOverviewComponent,
+    TransactionsComponent,
   ],
   imports: [
     CommonModule,
@@ -48,6 +54,10 @@ import { DashboardOverviewComponent } from './components/dashboard-overview/dash
     MatInputModule,
     MatIconModule,
     MatTabsModule,
+    MatDatepickerModule,
+    MatNativeDateModule,
+
+    jqxGridModule,
 
     ToastrModule.forRoot(),
     NgxSpinnerModule.forRoot(),

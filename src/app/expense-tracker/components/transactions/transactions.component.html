@@ -1,0 +1,148 @@
+<section class="flex justify-center mx-60">
+  <div
+    class="w-60 max-w-md mb-6 p-2 bg-neutral-100 border border-blue-200 rounded-lg shadow sm:p-4 dark:bg-gray-800 dark:border-gray-700"
+  >
+    <div class="flex items-center justify-between mb-2">
+      <p class="text-base font-semibold text-gray-900 dark:text-white">
+        <span class="inline-block w-2 h-2 mr-2 bg-green-500 rounded-full"></span
+        >Your Income
+      </p>
+      <i
+        class="fas fa-square-plus text-lg text-green-600 dark:text-green-400 mb-2"
+      ></i>
+    </div>
+    <div class="border-t-2 border-slate-200">
+      <p
+        class="text-xl font-bold text-gray-900 dark:text-white pt-2 sm:pt-2 pb-0"
+      >
+        ${{ totalIncome }}
+      </p>
+      <p class="text-sm text-green-700 dark:text-white pb-0">
+        Your income amount
+      </p>
+    </div>
+  </div>
+  <div
+    class="w-60 max-w-md mb-6 p-2 bg-neutral-100 border border-blue-200 rounded-lg shadow sm:p-4 dark:bg-gray-800 dark:border-gray-700 mx-4"
+  >
+    <div class="flex items-center justify-between mb-2">
+      <p class="text-base font-semibold text-gray-900 dark:text-white">
+        <span class="inline-block w-2 h-2 mr-2 bg-red-500 rounded-full"></span
+        >Total Expenses
+      </p>
+      <i
+        class="fas fa-square-minus text-lg text-red-600 dark:text-red-400 mb-2"
+      ></i>
+    </div>
+    <div class="border-t-2 border-slate-200">
+      <p
+        class="text-xl font-bold text-gray-900 dark:text-white pt-2 sm:pt-2 pb-0"
+      >
+        ${{ totalExpense }}
+      </p>
+      <p class="text-sm text-green-700 dark:text-white pb-0">
+        Your total spend
+      </p>
+    </div>
+  </div>
+  <div
+    class="w-60 max-w-md mb-6 p-2 bg-neutral-100 border border-blue-200 rounded-lg shadow sm:p-4 dark:bg-gray-800 dark:border-gray-700"
+  >
+    <div class="flex items-center justify-between mb-2">
+      <p class="text-base font-semibold text-gray-900 dark:text-white">
+        <span
+          class="inline-block w-2 h-2 mr-2 bg-yellow-500 rounded-full"
+        ></span
+        >Total Money
+      </p>
+      <i
+        class="fas fa-database text-lg text-yellow-600 dark:text-yellow-400 mb-2"
+      ></i>
+    </div>
+    <div class="border-t-2 border-slate-200">
+      <p
+        class="text-xl font-bold text-gray-900 dark:text-white pt-2 sm:pt-2 pb-0"
+      >
+        ${{ totalAmount }}
+      </p>
+      <p class="text-sm text-green-700 dark:text-white pb-0">
+        Total money in your wallet
+      </p>
+    </div>
+  </div>
+</section>
+
+<div class="mx-20 mt-8">
+  <form
+    class="flex mb-4"
+    [formGroup]="transactionForm"
+    (ngSubmit)="addToGrid()"
+  >
+    <mat-form-field class="w-1/2" appearance="outline">
+      <mat-label>Category</mat-label>
+      <input type="text" matInput formControlName="category" />
+    </mat-form-field>
+    <mat-form-field class="w-1/3 mx-4" appearance="outline">
+      <mat-label>Amount</mat-label>
+      <input type="number" matInput formControlName="amount" />
+    </mat-form-field>
+
+    <mat-form-field class="w-1/2" appearance="outline">
+      <mat-label>Date</mat-label>
+      <input
+        matInput
+        [matDatepicker]="datepicker1"
+        placeholder="Pick a date"
+        formControlName="date"
+      />
+      <mat-datepicker-toggle
+        matSuffix
+        [for]="datepicker1"
+      ></mat-datepicker-toggle>
+      <mat-datepicker #datepicker1> </mat-datepicker>
+    </mat-form-field>
+    <button
+      class="ms-6 transaction-frm-btn w-52"
+      mat-raised-button
+      [disabled]="!transactionForm.valid"
+    >
+      Add To Grid
+    </button>
+  </form>
+
+  <div class="flex justify-between mt-10">
+    <p class="w-40 text-lg font-semibold text-gray-900 dark:text-white">
+      All Transactions
+    </p>
+    <button
+      mat-raised-button
+      class="transaction-save-btn"
+      [disabled]="source.length <= 0 || isSaveButtonDisabled"
+      (click)="saveGridData()"
+    >
+      Save Data
+    </button>
+  </div>
+  <jqxGrid
+    #TransactionGrid
+    [selectionmode]="'checkbox'"
+    [theme]="'energyblue'"
+    [source]="dataAdapter"
+    [columns]="column"
+    [autoheight]="true"
+    [pageable]="true"
+    [altrows]="true"
+    [filterable]="true"
+    [sortable]="true"
+    [showfilterrow]="true"
+    [pagesizeoptions]="['10', '15', '20', '25']"
+    [pagesize]="15"
+    [pagerheight]="15"
+    [autoheight]="true"
+    [columnsresize]="true"
+    [altrows]="true"
+    [editable]="true"
+    [width]="'100%'"
+  >
+  </jqxGrid>
+</div>

@@ -9,6 +9,7 @@ import { ForgotPasswordComponent } from './authentication/forgot-password/forgot
 // MAIN COMPONENTS
 import { SideNavComponent } from './dashboard/side-nav/side-nav.component';
 import { DashboardOverviewComponent } from './components/dashboard-overview/dashboard-overview.component';
+import { TransactionsComponent } from './components/transactions/transactions.component';
 
 const routes: Routes = [
   { path: 'login', component: LoginComponent },
@@ -19,6 +20,7 @@ const routes: Routes = [
     component: SideNavComponent,
     children: [
       { path: 'dashboard', component: DashboardOverviewComponent },
+      { path: 'transactions', component: TransactionsComponent },
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
     ],
   },

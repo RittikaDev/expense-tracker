@@ -3,7 +3,12 @@
 @tailwind utilities;
 
 @import "@angular/material/prebuilt-themes/indigo-pink.css";
+
 @import "../node_modules/ngx-toastr/toastr.css";
+
+@import "../node_modules/jqwidgets-ng/jqwidgets/styles/jqx.base.css";
+@import "../node_modules/jqwidgets-ng/jqwidgets/styles/jqx.darkblue.css";
+@import "../node_modules/jqwidgets-ng/jqwidgets/styles/jqx.energyblue.css";
 
 html,
 body {
@@ -12,4 +17,7 @@ body {
 body {
   margin: 0;
   font-family: Roboto, "Helvetica Neue", sans-serif;
+}
+.jqx-grid-column-header {
+  font-weight: bold;
 }
