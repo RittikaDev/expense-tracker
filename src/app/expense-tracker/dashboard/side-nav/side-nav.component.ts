@@ -57,8 +57,8 @@ export class SideNavComponent {
   navigateToTransactions() {
     this.router.navigate([`${this.commonUrl}transactions`]);
   }
-  navigateToEarrnings() {
-    this.router.navigate(['expense-tracker/earrnings']);
+  navigateToBudget() {
+    this.router.navigate([`${this.commonUrl}budget`]);
   }
 
   logOut() {

@@ -10,6 +10,7 @@ import { ForgotPasswordComponent } from './authentication/forgot-password/forgot
 import { SideNavComponent } from './dashboard/side-nav/side-nav.component';
 import { DashboardOverviewComponent } from './components/dashboard-overview/dashboard-overview.component';
 import { TransactionsComponent } from './components/transactions/transactions.component';
+import { BudgetComponent } from './components/budget/budget.component';
 
 const routes: Routes = [
   { path: 'login', component: LoginComponent },
@@ -21,6 +22,7 @@ const routes: Routes = [
     children: [
       { path: 'dashboard', component: DashboardOverviewComponent },
       { path: 'transactions', component: TransactionsComponent },
+      { path: 'budget', component: BudgetComponent },
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
     ],
   },

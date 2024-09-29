@@ -1,11 +1,14 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { finalize } from 'rxjs';
 
 import { jqxGridComponent } from 'jqwidgets-ng/jqxgrid';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { ToastrService } from 'ngx-toastr';
 
-import { TransactionGridInterface } from '../../../interfaces/TransactionGrid.interface';
+import { ITransaction } from '../../../interfaces/TransactionBudget.interface';
+import { TransactionBudgetService } from '../../services/transaction-budget.service';
+import { DatePipe } from '@angular/common';
 
 @Component({
   selector: 'app-transactions',
@@ -13,6 +16,7 @@ import { TransactionGridInterface } from '../../../interfaces/TransactionGrid.in
   styleUrls: [
     './transactions.component.scss',
     '../../authentication/login/login.component.scss',
+    '../transactions/transactions.component.scss',
   ],
 })
 export class TransactionsComponent implements OnInit {
@@ -28,81 +32,11 @@ export class TransactionsComponent implements OnInit {
 
   status = ['Success', 'Cancel'];
 
-  ngOnInit(): void {
-    this.getColumns();
-    this.dataAdapter = new jqx.dataAdapter(this.transactionSource);
-
-    this.transactionForm = this.fb.group({
-      category: ['', [Validators.required]],
-      amount: [0, Validators.required],
-      date: [''],
-    });
-
-    this.source.map((data: TransactionGridInterface) => {
-      if (data.status === 'Success') this.totalExpense += data.amount;
-    });
-
-    this.totalAmount = this.totalIncome - this.totalExpense;
-  }
-
-  constructor(
-    private fb: FormBuilder,
-    private toastr: ToastrService,
-    private spinner: NgxSpinnerService
-  ) {}
+  arrayToSelectNewRows: ITransaction[] = [];
 
   column: any[] = [];
-  gridData: any[] = [];
-  source: TransactionGridInterface[] = [
-    {
-      category: 'Groceries',
-      amount: 50,
-      date: '2024-09-10',
-      status: 'Success',
-    },
-    {
-      category: 'Transport',
-      amount: 1100,
-      date: '2024-09-11',
-      status: 'Cancel',
-    },
-    {
-      category: 'Entertainment',
-      amount: 100,
-      date: '2024-09-12',
-      status: 'Success',
-    },
-    {
-      category: 'Utilities',
-      amount: 80,
-      date: '2024-09-13',
-      status: 'Success',
-    },
-    {
-      category: 'Dining',
-      amount: 40,
-      date: '2024-09-14',
-      status: 'Cancel',
-    },
-    {
-      category: 'Health',
-      amount: 150,
-      date: '2024-09-15',
-      status: 'Success',
-    },
-    {
-      category: 'Education',
-      amount: 200,
-      date: '2024-09-16',
-      status: 'Success',
-    },
-    {
-      category: 'Travel',
-      amount: 300,
-      date: '2024-09-17',
-      status: 'Cancel',
-    },
-  ];
+
+  source: ITransaction[] = [];
 
   transactionSource: any = {
     localdata: this.source,
@@ -116,6 +50,31 @@ export class TransactionsComponent implements OnInit {
   };
 
   dataAdapter: any;
+
+  ngOnInit(): void {
+    this.getColumns();
+    this.dataAdapter = new jqx.dataAdapter(this.transactionSource);
+
+    this.transactionForm = this.fb.group({
+      category: ['', [Validators.required]],
+      amount: [0, Validators.required],
+      date: ['', Validators.required],
+    });
+
+    this.source.map((data: ITransaction) => {
+      if (data.status === 'Success') this.totalExpense += data.amount;
+    });
+
+    this.totalAmount = this.totalIncome - this.totalExpense;
+  }
+
+  constructor(
+    private fb: FormBuilder,
+    private toastr: ToastrService,
+    private spinner: NgxSpinnerService,
+    private datepipe: DatePipe,
+    private transactionBudgetService: TransactionBudgetService
+  ) {}
 
   getColumns() {
     this.column = [
@@ -140,6 +99,7 @@ export class TransactionsComponent implements OnInit {
         cellsformat: 'dd-MMM-yyyy',
         cellsalign: 'center',
         align: 'center',
+        filtertype: 'date',
       },
       {
         text: 'Status',
@@ -150,7 +110,7 @@ export class TransactionsComponent implements OnInit {
         cellbeginedit: this.cellbeginedit.bind(this),
         cellendedit: this.cellendedit.bind(this),
         columntype: 'combobox',
-        initeditor: (row: number, cellvalue: any, editor: any) => {
+        initeditor: (row: number, cellvalue: string, editor: any) => {
           editor.jqxComboBox({
             autoDropDownHeight: true,
             source: this.status,
@@ -161,7 +121,7 @@ export class TransactionsComponent implements OnInit {
             if (index >= 0) editor.jqxComboBox('selectIndex', index);
           }
         },
-        validation: (cell: any, value: any) => {
+        validation: (cell: any, value: string) => {
           if (value == '') {
             this.isSaveButtonDisabled = true;
             return { result: false, message: 'Status can not be null' };
@@ -182,13 +142,11 @@ export class TransactionsComponent implements OnInit {
     row: number,
     datafield: string,
     columntype: string,
-    oldvalue: any,
-    newvalue: any
+    oldvalue: string,
+    newvalue: string
   ) {
     const rowData = this.TransactionGrid.getrowdata(row);
     const amount = rowData.amount;
-
-    console.log(oldvalue, newvalue);
 
     if (oldvalue !== newvalue) {
       if (newvalue === 'Success') this.updateTotal(amount, 'add');
@@ -216,28 +174,75 @@ export class TransactionsComponent implements OnInit {
 
   // ADDING NEW ROW TO GRID
   addToGrid() {
-    const newTransaction = {
+    const newTransaction: ITransaction = {
       category: this.transactionForm.value.category,
       amount: this.transactionForm.value.amount,
-      date: this.transactionForm.value.date,
+      date: this.datepipe.transform(
+        this.transactionForm.value.date,
+        'dd-MMM-yyyy'
+      ),
       status: 'Success',
     };
-    this.isSaveButtonDisabled = false;
+
+    const date = new Date(this.transactionForm.value.date);
+    const year = date.getFullYear();
+    const month = date.getMonth() + 1;
+
+    // this.transactionBudgetService.addTransaction(newTransaction);
+    // this.transactionBudgetService.checkBudgetOverrun(newTransaction);
+
+    this.transactionBudgetService
+      .CheckBudgetForCategory(
+        newTransaction.category,
+        newTransaction.amount,
+        year,
+        month
+      )
+      .subscribe({
+        next: (res) => {
+          console.log(res);
+        },
+        error: (err) => {},
+      });
+
     this.source = [newTransaction, ...this.source];
+    this.arrayToSelectNewRows.push(newTransaction);
 
     this.totalExpense += newTransaction.amount;
 
     this.transactionSource.localdata = this.source;
     this.TransactionGrid.updatebounddata();
 
+    this.arrayToSelectNewRows.map((newRow: ITransaction, index: number) =>
+      this.TransactionGrid.selectrow(index)
+    );
+
     this.transactionForm.reset({ amount: 0, date: '', category: '' });
+    this.isSaveButtonDisabled = false;
   }
 
   // FINAL SAVE
   saveGridData() {
     this.spinner.show();
-    this.spinner.hide();
-    this.toastr.success('Data saved successfully', 'Success');
-    // this.toastr.error('Failed to save data', 'Error');
+    const rowsToSave = this.TransactionGrid.getselectedrowindexes().map(
+      (index) => this.source[index]
+    );
+
+    this.transactionBudgetService
+      .AddTransaction(rowsToSave)
+      .pipe(finalize(() => this.spinner.hide()))
+      .subscribe({
+        next: (res) => {
+          this.source.push(res);
+          this.transactionForm.reset({
+            amount: 0,
+            date: '',
+            category: '',
+          });
+          this.isSaveButtonDisabled = false;
+          this.toastr.success('Successfully added a budget', 'Success');
+        },
+        error: () => this.toastr.error('Failed to add a budget', 'Error'),
+      });
   }
 }

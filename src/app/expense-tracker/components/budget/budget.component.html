@@ -1,0 +1,89 @@
+<section class="flex mx-16 mt-20">
+  <div class="w-2/5 me-20">
+    <form class="mb-4" [formGroup]="budgetForm" (ngSubmit)="addToGrid()">
+      <div class="mb-6">
+        <mat-form-field appearance="outline">
+          <mat-label>Pick A Date</mat-label>
+          <input
+            name=""
+            matInput
+            [matDatepicker]="picker2"
+            formControlName="date"
+          />
+
+          <mat-datepicker-toggle
+            matSuffix
+            [for]="picker2"
+          ></mat-datepicker-toggle>
+          <mat-datepicker
+            #picker2
+            startView="multi-year"
+            (monthSelected)="setMonthAndYear($event, picker2)"
+          ></mat-datepicker>
+        </mat-form-field>
+        <div
+          class="text-red-600 font-bold text-sm"
+          *ngIf="showFormError('date')"
+        >
+          Date is required
+        </div>
+      </div>
+      <div class="flex">
+        <div class="w-1/3">
+          <mat-form-field appearance="outline">
+            <mat-label>Category</mat-label>
+            <input type="text" matInput formControlName="category" />
+          </mat-form-field>
+          <div
+            class="text-red-600 font-bold text-sm"
+            *ngIf="showFormError('category')"
+          >
+            Category is required
+          </div>
+        </div>
+        <div class="w-1/4 mx-6">
+          <mat-form-field class="w-full" appearance="outline">
+            <mat-label>Budget</mat-label>
+            <input type="number" matInput formControlName="budget" />
+          </mat-form-field>
+          <div
+            class="text-red-600 font-bold text-sm"
+            *ngIf="showFormError('budget')"
+          >
+            Budget is required
+          </div>
+        </div>
+        <button
+          class="transaction-frm-btn w-52"
+          mat-raised-button
+          [disabled]="!budgetForm.valid"
+        >
+          Add To Budget Table
+        </button>
+      </div>
+    </form>
+    <jqxGrid
+      #BudgetGrid
+      [theme]="'energyblue'"
+      [source]="dataAdapter"
+      [columns]="budgetColumn"
+      [autoheight]="true"
+      [pageable]="true"
+      [altrows]="true"
+      [filterable]="true"
+      [sortable]="true"
+      [showfilterrow]="true"
+      [pagesizeoptions]="['10', '15', '20', '25']"
+      [pagesize]="15"
+      [pagerheight]="15"
+      [autoheight]="true"
+      [columnsresize]="true"
+      [altrows]="true"
+      [width]="'100%'"
+      class="w-1/4"
+    ></jqxGrid>
+  </div>
+  <div class="w-3/5 h-full">
+    <div echarts [options]="chartOption" class="chart h-full"></div>
+  </div>
+</section>

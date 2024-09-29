@@ -1,5 +1,5 @@
 import { NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, DatePipe } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 
@@ -32,6 +32,7 @@ import { ForgotPasswordComponent } from './authentication/forgot-password/forgot
 import { SideNavComponent } from './dashboard/side-nav/side-nav.component';
 import { DashboardOverviewComponent } from './components/dashboard-overview/dashboard-overview.component';
 import { TransactionsComponent } from './components/transactions/transactions.component';
+import { BudgetComponent } from './components/budget/budget.component';
 
 @NgModule({
   declarations: [
@@ -42,6 +43,7 @@ import { TransactionsComponent } from './components/transactions/transactions.co
     SideNavComponent,
     DashboardOverviewComponent,
     TransactionsComponent,
+    BudgetComponent,
   ],
   imports: [
     CommonModule,
@@ -68,5 +70,6 @@ import { TransactionsComponent } from './components/transactions/transactions.co
     AngularFireModule.initializeApp(environment.firebaseConfig),
     AngularFireAuthModule,
   ],
+  providers: [DatePipe],
 })
 export class ExpenseTrackerModule {}
