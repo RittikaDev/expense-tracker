@@ -7,10 +7,15 @@ import { AngularFireAuth } from '@angular/fire/compat/auth';
 
 import { ToastrService } from 'ngx-toastr';
 
+import { HttpClient } from '@angular/common/http';
+import { environment } from '../../../environments/environment';
+
 @Injectable({
   providedIn: 'root',
 })
 export class AuthenticationService {
+  private apiUrl = environment.API_URL;
+
   User = signal<{ email: string; displayName: string }>({
     email: sessionStorage.getItem('email') || '',
     displayName: sessionStorage.getItem('displayName') || '',
@@ -20,7 +25,8 @@ export class AuthenticationService {
     private firebaseAuth: AngularFireAuth,
     public ngZone: NgZone,
     private router: Router,
-    private toastr: ToastrService
+    private toastr: ToastrService,
+    private http: HttpClient
   ) {}
 
   getUser = () => this.User();
@@ -32,41 +38,63 @@ export class AuthenticationService {
   ): Observable<UserCredential> {
     const promise = this.firebaseAuth
       .createUserWithEmailAndPassword(email, password)
-      .then((userCredential: any) => {
-        return updateProfile(userCredential.user, {
+      .then(async (userCredential: any) => {
+        await updateProfile(userCredential.user, {
           displayName: displayName,
-        }).then(() => {
-          this.ngZone.run(() => {
-            this.router.navigate(['expense-tracker/side-nav']);
-          });
-          sessionStorage.setItem('email', email);
-          sessionStorage.setItem('displayName', displayName);
-          this.User.update(() => ({ email, displayName }));
-          return userCredential.user.multiFactor.user;
         });
+        this.ngZone.run(() => {
+          this.router.navigate(['expense-tracker/side-nav']);
+        });
+        sessionStorage.setItem('email', email);
+        sessionStorage.setItem('displayName', displayName);
+        this.User.update(() => ({
+          email,
+          displayName,
+        }));
+        return userCredential.user.multiFactor.user;
       });
 
     return from(promise);
   }
 
-  login(email: string, password: string): any {
-    const loginPromise = this.firebaseAuth
-      .signInWithEmailAndPassword(email, password)
-      .then((result: any) => {
-        this.ngZone.run(() => {
-          this.router.navigate(['expense-tracker/side-nav']);
-        });
-        const displayName = result.user.displayName;
-        sessionStorage.setItem('email', email);
-        sessionStorage.setItem('displayName', displayName);
-        this.User.update(() => ({ email, displayName }));
-        return result.user;
-      })
-      .catch((error) => {
-        window.alert(error.message);
-      });
+  login(email: string, password: string): Observable<any> {
+    return new Observable((observer) => {
+      this.firebaseAuth
+        .signInWithEmailAndPassword(email, password)
+        .then(async (result: any) => {
+          const firebaseToken = await result.user.getIdToken();
 
-    return from(loginPromise);
+          this.http
+            .post(`${this.apiUrl}authenticate`, { token: firebaseToken })
+            .subscribe({
+              next: (response: any) => {
+                const jwtToken = response.token;
+                const displayName = result.user.displayName;
+
+                localStorage.setItem('jwtToken', jwtToken);
+                sessionStorage.setItem('email', email);
+                sessionStorage.setItem('displayName', displayName);
+
+                this.User.update(() => ({
+                  email,
+                  displayName,
+                }));
+
+                observer.next(result.user);
+                observer.complete();
+
+                this.ngZone.run(() => {
+                  this.router.navigate(['expense-tracker/side-nav']);
+                });
+              },
+              error: (err) => {
+                observer.error(err);
+                this.toastr.error('Authentication failed', 'Error');
+              },
+            });
+        })
+        .catch((error) => observer.error(error));
+    });
   }
 
   forgotPassword(email: string) {

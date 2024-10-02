@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, effect, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 import { jqxGridComponent } from 'jqwidgets-ng/jqxgrid';
@@ -10,6 +10,7 @@ import { IBudget } from '../../../interfaces/TransactionBudget.interface';
 import { TransactionBudgetService } from '../../services/transaction-budget.service';
 import { MatDatepicker } from '@angular/material/datepicker';
 import { DatePipe } from '@angular/common';
+import { AuthenticationService } from '../../services/authentication.service';
 
 @Component({
   selector: 'app-budget',
@@ -21,6 +22,8 @@ import { DatePipe } from '@angular/common';
 })
 export class BudgetComponent implements OnInit {
   @ViewChild('BudgetGrid') BudgetGrid!: jqxGridComponent;
+
+  userID: string | null = '';
 
   budgetForm: FormGroup = new FormGroup({});
   budgets: IBudget[] = [];
@@ -47,40 +50,45 @@ export class BudgetComponent implements OnInit {
   ) {}
 
   loadBudgets() {
-    this.transactionBudgetService.GetAllBudgets().subscribe((data) => {
-      this.budgets = data.map((item: IBudget) => ({
-        category: item.category,
-        budget: item.budget,
-        date: this.datepipe.transform(item.date, '01-MMM-yyyy'),
-        actualSpending: item.actualSpending,
-      }));
+    const year = new Date(this.budgetForm.value.date).getFullYear();
+    const month = new Date(this.budgetForm.value.date).getMonth() + 1;
 
-      this.budgetSource.localdata = this.budgets;
-      this.dataAdapter = new jqx.dataAdapter(this.budgetSource);
-      this.BudgetGrid.updatebounddata();
-    });
+    this.transactionBudgetService
+      .GetAllBudgets(this.userID, year, month)
+      .subscribe({
+        next: (data) => {
+          if (data.length <= 0)
+            this.toastr.info('No budget was found for this user');
+
+          this.budgets = data.map((item: IBudget) => ({
+            category: item.category,
+            budget: item.budget,
+            date: this.datepipe.transform(item.date, '01-MMM-yyyy'),
+            actualSpending: item.actualSpending,
+          }));
+
+          this.budgetSource.localdata = this.budgets;
+          this.dataAdapter = new jqx.dataAdapter(this.budgetSource);
+          this.BudgetGrid.updatebounddata();
+          this.updateChart();
+        },
+        error: (err) => this.toastr.error(err.error.error, 'Error'),
+      });
   }
 
   ngOnInit(): void {
     this.budgetForm = this.fb.group({
       category: ['', [Validators.required]],
       budget: [0, Validators.required],
-      date: [0, Validators.required],
+      date: [new Date(), Validators.required],
     });
+
+    this.userID = sessionStorage.getItem('userID');
+
     this.getColumns();
     this.loadBudgets();
 
-    this.updateChart();
     this.dataAdapter = new jqx.dataAdapter(this.budgetSource);
-
-    // this.transactionBudgetService.transactions$.subscribe(() =>
-    //   this.updateActualSpending()
-    // );
-
-    // this.transactionBudgetService.budgets$.subscribe((budgets) => {
-    //   this.budgets = budgets;
-    //   this.updateActualSpending();
-    // });
   }
 
   setMonthAndYear(
@@ -98,6 +106,7 @@ export class BudgetComponent implements OnInit {
     newDate.setFullYear(selectedYear);
 
     this.budgetForm.get('date')?.setValue(newDate);
+    this.loadBudgets();
     datepicker.close();
   }
 
@@ -118,6 +127,7 @@ export class BudgetComponent implements OnInit {
         width: '30%',
         cellsalign: 'center',
         align: 'center',
+        cellclassname: this.cellclass,
       },
       {
         text: 'Budget',
@@ -125,6 +135,7 @@ export class BudgetComponent implements OnInit {
         width: '22%',
         cellsalign: 'center',
         align: 'center',
+        cellclassname: this.cellclass,
       },
       {
         text: 'Month',
@@ -132,6 +143,7 @@ export class BudgetComponent implements OnInit {
         width: '25%',
         cellsalign: 'center',
         align: 'center',
+        cellclassname: this.cellclass,
       },
       {
         text: 'Actual Spending',
@@ -139,17 +151,19 @@ export class BudgetComponent implements OnInit {
         width: '23%',
         cellsalign: 'center',
         align: 'center',
+        cellclassname: this.cellclass,
       },
     ];
   }
 
+  // HIGHLIGHT ROW WITH RED COLOR IF ACTUAL SPEND IS MORE THAN BUDGET
+  cellclass(row: any, column: any, value: any, rowData: any) {
+    return rowData.actualSpending > rowData.budget ? 'red' : '';
+  }
+
   updateActualSpending() {
     this.budgets.forEach((budget) => {
-      this.actualSpending[budget.category] =
-        this.transactionBudgetService.getActualSpendingForCategory(
-          budget.category
-        );
-      console.log(this.actualSpending);
+      this.actualSpending[budget.category] = 0;
     });
   }
 
@@ -164,16 +178,17 @@ export class BudgetComponent implements OnInit {
     this.budgetSource.localdata = this.budgets;
     this.BudgetGrid.updatebounddata();
 
-    this.transactionBudgetService.AddBudget(this.budgetForm.value).subscribe({
-      next: (newBudget) => {
-        this.budgets.push(newBudget);
-        this.budgetForm.reset();
-        this.toastr.success('Successfully added a budget', 'Success');
-      },
-      error: () => this.toastr.error('Failed to add a budget', 'Error'),
-    });
-
-    // this.transactionBudgetService.addBudget(newBudget);
+    this.transactionBudgetService
+      .AddBudget(this.budgetForm.value, this.userID)
+      .subscribe({
+        next: (newBudget) => {
+          this.budgets.push(newBudget);
+          this.budgetForm.reset();
+          this.toastr.success('Successfully added new transaction', 'Success');
+        },
+        error: () =>
+          this.toastr.error('Failed to add new transaction', 'Error'),
+      });
 
     this.budgetForm.reset();
   }
@@ -182,11 +197,8 @@ export class BudgetComponent implements OnInit {
     const categories = this.budgets.map((b) => b.category);
     const budgetValues = this.budgets.map((b) => b.budget);
     const actualValues = this.budgets.map((b) => b.actualSpending);
-    // const actualValues = categories.map((category) =>
-    //   this.transactionBudgetService.getActualSpendingForCategory(category)
-    // );
 
-    console.log(actualValues);
+    // console.log(this.budgets); // DEBUG:
 
     this.chartOption = {
       title: {
@@ -218,6 +230,9 @@ export class BudgetComponent implements OnInit {
             show: true,
             position: 'insideRight',
           },
+          itemStyle: {
+            color: '#60a5fa',
+          },
         },
         {
           name: 'Actual Spending',
@@ -226,6 +241,13 @@ export class BudgetComponent implements OnInit {
           label: {
             show: true,
             position: 'insideRight',
+          },
+          itemStyle: {
+            color: (params: any) => {
+              const spending = actualValues[params.dataIndex];
+              const budget = budgetValues[params.dataIndex];
+              return spending && spending > budget ? '#fdacb0' : '#14b8a6';
+            },
           },
         },
       ],

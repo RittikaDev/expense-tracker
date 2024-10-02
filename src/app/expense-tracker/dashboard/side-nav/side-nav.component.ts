@@ -1,8 +1,9 @@
 import { Component, effect } from '@angular/core';
-import { ITheme, theme$ } from '../../../interfaces/theme-switch';
 import { Router } from '@angular/router';
+
+import { ITheme, theme$ } from '../../../interfaces/theme-switch';
+
 import { AuthenticationService } from '../../services/authentication.service';
-import { NgxSpinnerService } from 'ngx-spinner';
 
 @Component({
   selector: 'app-side-nav',
@@ -22,8 +23,7 @@ export class SideNavComponent {
 
   constructor(
     private router: Router,
-    private authService: AuthenticationService,
-    private spinner: NgxSpinnerService
+    private authService: AuthenticationService
   ) {
     effect(() => {
       const user = this.authService.getUser();
@@ -33,7 +33,7 @@ export class SideNavComponent {
       }
     });
 
-    console.log('User Logged In: ', this.userLoggedIn);
+    // console.log('User Logged In: ', this.userLoggedIn); // DEBUG:
   }
 
   ngOnInit() {

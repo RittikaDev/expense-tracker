@@ -11,6 +11,7 @@ import { SideNavComponent } from './dashboard/side-nav/side-nav.component';
 import { DashboardOverviewComponent } from './components/dashboard-overview/dashboard-overview.component';
 import { TransactionsComponent } from './components/transactions/transactions.component';
 import { BudgetComponent } from './components/budget/budget.component';
+import { AuthGuard } from '../guard/auth.guard';
 
 const routes: Routes = [
   { path: 'login', component: LoginComponent },
@@ -20,10 +21,22 @@ const routes: Routes = [
     path: 'side-nav',
     component: SideNavComponent,
     children: [
-      { path: 'dashboard', component: DashboardOverviewComponent },
-      { path: 'transactions', component: TransactionsComponent },
-      { path: 'budget', component: BudgetComponent },
-      { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
+      {
+        path: 'dashboard',
+        component: DashboardOverviewComponent,
+        canActivate: [AuthGuard],
+      },
+      {
+        path: 'transactions',
+        component: TransactionsComponent,
+        canActivate: [AuthGuard],
+      },
+      { path: 'budget', component: BudgetComponent, canActivate: [AuthGuard] },
+      {
+        path: '',
+        redirectTo: 'dashboard',
+        pathMatch: 'full',
+      },
     ],
   },
 ];

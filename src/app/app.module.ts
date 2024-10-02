@@ -8,7 +8,8 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { ExpenseTrackerModule } from './expense-tracker/expense-tracker.module';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
-import { HttpClientModule } from '@angular/common/http';
+import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
+import { jwtInterceptor } from './interceptor/jwt.interceptor';
 
 @NgModule({
   declarations: [AppComponent],
@@ -18,7 +19,15 @@ import { HttpClientModule } from '@angular/common/http';
     HttpClientModule,
     ExpenseTrackerModule,
   ],
-  providers: [provideClientHydration(), provideAnimationsAsync()],
+  providers: [
+    provideClientHydration(),
+    provideAnimationsAsync(),
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: jwtInterceptor,
+      multi: true,
+    },
+  ],
   bootstrap: [AppComponent],
 })
 export class AppModule {}

@@ -21,6 +21,7 @@ import { DatePipe } from '@angular/common';
 })
 export class TransactionsComponent implements OnInit {
   @ViewChild('TransactionGrid') TransactionGrid!: jqxGridComponent;
+  userID: string | null = '';
 
   transactionForm: FormGroup = new FormGroup({});
 
@@ -52,7 +53,10 @@ export class TransactionsComponent implements OnInit {
   dataAdapter: any;
 
   ngOnInit(): void {
+    this.userID = sessionStorage.getItem('userID');
+
     this.getColumns();
+    this.loadTransactions();
     this.dataAdapter = new jqx.dataAdapter(this.transactionSource);
 
     this.transactionForm = this.fb.group({
@@ -75,6 +79,21 @@ export class TransactionsComponent implements OnInit {
     private datepipe: DatePipe,
     private transactionBudgetService: TransactionBudgetService
   ) {}
+
+  loadTransactions() {
+    this.transactionBudgetService.GetAllTransactions(this.userID).subscribe({
+      next: (data) => {
+        if (data.length <= 0)
+          this.toastr.info('No transaction was found for this user');
+
+        this.source = data;
+        this.transactionSource.localdata = this.source;
+        this.dataAdapter = new jqx.dataAdapter(this.source);
+        this.TransactionGrid.updatebounddata();
+      },
+      error: (err) => this.toastr.error(err.error.error, 'Error'),
+    });
+  }
 
   getColumns() {
     this.column = [
@@ -188,21 +207,17 @@ export class TransactionsComponent implements OnInit {
     const year = date.getFullYear();
     const month = date.getMonth() + 1;
 
-    // this.transactionBudgetService.addTransaction(newTransaction);
-    // this.transactionBudgetService.checkBudgetOverrun(newTransaction);
-
     this.transactionBudgetService
       .CheckBudgetForCategory(
+        this.userID,
         newTransaction.category,
         newTransaction.amount,
         year,
         month
       )
       .subscribe({
-        next: (res) => {
-          console.log(res);
-        },
-        error: (err) => {},
+        next: (res: any) => this.toastr.success(res.message, 'Success'),
+        error: (err) => this.toastr.warning(err.error.error, 'Warning'),
       });
 
     this.source = [newTransaction, ...this.source];
@@ -229,7 +244,7 @@ export class TransactionsComponent implements OnInit {
     );
 
     this.transactionBudgetService
-      .AddTransaction(rowsToSave)
+      .AddTransaction(this.userID, rowsToSave)
       .pipe(finalize(() => this.spinner.hide()))
       .subscribe({
         next: (res) => {
