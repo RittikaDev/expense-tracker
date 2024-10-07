@@ -1,8 +1,8 @@
 import { Injectable, NgZone, signal } from '@angular/core';
 import { Router } from '@angular/router';
-import { from, Observable } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
 
-import { updateProfile, UserCredential } from '@angular/fire/auth';
+import { updateProfile } from '@angular/fire/auth';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
 
 import { ToastrService } from 'ngx-toastr';
@@ -16,6 +16,9 @@ import { environment } from '../../../environments/environment';
 export class AuthenticationService {
   private apiUrl = environment.API_URL;
 
+  private userIdSubject = new BehaviorSubject<string | null>(null);
+  userId$ = this.userIdSubject.asObservable();
+
   User = signal<{ email: string; displayName: string }>({
     email: sessionStorage.getItem('email') || '',
     displayName: sessionStorage.getItem('displayName') || '',
@@ -27,34 +30,70 @@ export class AuthenticationService {
     private router: Router,
     private toastr: ToastrService,
     private http: HttpClient
-  ) {}
+  ) {
+    // RESTORE AUTH STATE ON INIT
+    this.firebaseAuth.authState.subscribe((user) => {
+      if (user) {
+        this.setUserId(user.uid);
+        sessionStorage.setItem('email', user.email!);
+        sessionStorage.setItem('displayName', user.displayName!);
+        this.User.update(() => ({
+          email: user.email!,
+          displayName: user.displayName!,
+        }));
+      } else this.clearUserId();
+    });
+  }
 
   getUser = () => this.User();
+
+  setUserId = (userId: string) => this.userIdSubject.next(userId);
+  clearUserId = () => this.userIdSubject.next(null);
+  getUserId = (): string | null => this.userIdSubject.value;
 
   register(
     email: string,
     displayName: string,
     password: string
-  ): Observable<UserCredential> {
-    const promise = this.firebaseAuth
-      .createUserWithEmailAndPassword(email, password)
-      .then(async (userCredential: any) => {
-        await updateProfile(userCredential.user, {
-          displayName: displayName,
-        });
-        this.ngZone.run(() => {
-          this.router.navigate(['expense-tracker/side-nav']);
-        });
-        sessionStorage.setItem('email', email);
-        sessionStorage.setItem('displayName', displayName);
-        this.User.update(() => ({
-          email,
-          displayName,
-        }));
-        return userCredential.user.multiFactor.user;
-      });
+  ): Observable<any> {
+    return new Observable((observer) => {
+      this.firebaseAuth
+        .createUserWithEmailAndPassword(email, password)
+        .then(async (userCredential: any) => {
+          await updateProfile(userCredential.user, { displayName });
 
-    return from(promise);
+          const firebaseToken = await userCredential.user.getIdToken();
+
+          this.http
+            .post(`${this.apiUrl}authenticate`, { token: firebaseToken })
+            .subscribe({
+              next: (response: any) => {
+                const jwtToken = response.token;
+                const displayName = userCredential.user.displayName;
+
+                if (userCredential.user.uid)
+                  this.setUserId(userCredential.user.uid);
+
+                sessionStorage.setItem('jwtToken', jwtToken);
+                sessionStorage.setItem('email', email);
+                sessionStorage.setItem('displayName', displayName);
+
+                this.User.update(() => ({ email, displayName }));
+
+                observer.next(userCredential.user);
+                observer.complete();
+                this.ngZone.run(() => {
+                  this.router.navigate(['expense-tracker/side-nav']);
+                });
+              },
+              error: (err) => {
+                observer.error(err);
+                this.toastr.error('Registration failed', 'Error');
+              },
+            });
+        })
+        .catch((error) => observer.error(error));
+    });
   }
 
   login(email: string, password: string): Observable<any> {
@@ -71,7 +110,9 @@ export class AuthenticationService {
                 const jwtToken = response.token;
                 const displayName = result.user.displayName;
 
-                localStorage.setItem('jwtToken', jwtToken);
+                if (result.user.uid) this.setUserId(result.user.uid);
+
+                sessionStorage.setItem('jwtToken', jwtToken);
                 sessionStorage.setItem('email', email);
                 sessionStorage.setItem('displayName', displayName);
 
@@ -113,6 +154,8 @@ export class AuthenticationService {
       () => {
         sessionStorage.removeItem('email');
         sessionStorage.removeItem('displayName');
+        sessionStorage.removeItem('jwtToken');
+
         this.ngZone.run(() => {
           this.router.navigate(['expense-tracker/login']);
         });

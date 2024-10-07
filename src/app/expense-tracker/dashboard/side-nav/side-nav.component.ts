@@ -1,9 +1,10 @@
 import { Component, effect } from '@angular/core';
-import { Router } from '@angular/router';
+import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 
 import { ITheme, theme$ } from '../../../interfaces/theme-switch';
 
 import { AuthenticationService } from '../../services/authentication.service';
+import { filter, startWith } from 'rxjs';
 
 @Component({
   selector: 'app-side-nav',
@@ -23,7 +24,8 @@ export class SideNavComponent {
 
   constructor(
     private router: Router,
-    private authService: AuthenticationService
+    private authService: AuthenticationService,
+    private activatedRoute: ActivatedRoute
   ) {
     effect(() => {
       const user = this.authService.getUser();
@@ -35,9 +37,21 @@ export class SideNavComponent {
 
     // console.log('User Logged In: ', this.userLoggedIn); // DEBUG:
   }
-
+  Heading: string = '';
   ngOnInit() {
     theme$.subscribe((theme) => (this.theme = theme));
+    this.router.events
+      .pipe(
+        filter((event) => event instanceof NavigationEnd),
+        startWith(this.router)
+      )
+      .subscribe(() => {
+        var rt = this.getChild(this.activatedRoute);
+        rt.data.subscribe((data: any) => (this.Heading = data.title));
+      });
+  }
+  getChild(activatedRoute: ActivatedRoute): any {
+    return activatedRoute.firstChild ?? activatedRoute.firstChild;
   }
 
   // TOGGLE EVENTS
@@ -51,8 +65,10 @@ export class SideNavComponent {
 
   // NAVIGATION
   navigateToDashboard() {
-    console.log('Clicked');
     this.router.navigate([`${this.commonUrl}dashboard`]);
+  }
+  navigateToIncome() {
+    this.router.navigate([`${this.commonUrl}income`]);
   }
   navigateToTransactions() {
     this.router.navigate([`${this.commonUrl}transactions`]);

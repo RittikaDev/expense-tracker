@@ -1,0 +1,65 @@
+<div class="mx-60 mt-8">
+  <form class="mb-4" [formGroup]="incomeForm" (ngSubmit)="addToGrid()">
+    <div class="mb-6">
+      <app-month-picker
+        [formName]="incomeForm"
+        controlName="date"
+        placeholder="Date"
+      ></app-month-picker>
+    </div>
+    <div class="flex">
+      <section class="me-4">
+        <mat-form-field appearance="outline">
+          <mat-label>Category</mat-label>
+          <input type="text" matInput formControlName="category" />
+        </mat-form-field>
+        <div
+          class="text-red-600 font-bold text-sm"
+          *ngIf="showFormError('category')"
+        >
+          Category is required
+        </div>
+      </section>
+      <section>
+        <mat-form-field class="w-full" appearance="outline">
+          <mat-label>Amount</mat-label>
+          <input type="number" matInput formControlName="amount" />
+        </mat-form-field>
+        <div
+          class="text-red-600 font-bold text-sm"
+          *ngIf="showFormError('budget')"
+        >
+          Amount is required
+        </div>
+      </section>
+      <button
+        class="ms-4 transaction-frm-btn w-40"
+        mat-raised-button
+        [disabled]="!incomeForm.valid"
+      >
+        Add To Grid
+      </button>
+    </div>
+  </form>
+  <jqxGrid
+    #IncomeGrid
+    [theme]="'energyblue'"
+    [source]="dataAdapter"
+    [columns]="incomeColumn"
+    [theme]="'energyblue'"
+    [autoheight]="true"
+    [pageable]="true"
+    [altrows]="true"
+    [filterable]="true"
+    [sortable]="true"
+    [showfilterrow]="true"
+    [pagesizeoptions]="['10', '15', '20', '25']"
+    [pagesize]="15"
+    [pagerheight]="15"
+    [autoheight]="true"
+    [columnsresize]="true"
+    [altrows]="true"
+    [editable]="true"
+    [width]="'100%'"
+  ></jqxGrid>
+</div>

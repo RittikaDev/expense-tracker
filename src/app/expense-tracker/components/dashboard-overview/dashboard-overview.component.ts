@@ -12,7 +12,10 @@ import { EChartsOption } from 'echarts';
 
 import { ITheme, theme$ } from '../../../interfaces/theme-switch';
 import { CoolTheme } from '../../utilities/EChartColorTheme';
+
 import { AuthenticationService } from '../../services/authentication.service';
+import { TransactionBudgetService } from '../../services/transaction-budget.service';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-dashboard-overview',
@@ -28,6 +31,13 @@ export class DashboardOverviewComponent implements OnInit, AfterViewInit {
   theme: ITheme = 'dark';
   coolTheme = CoolTheme;
 
+  userID: string | null = '';
+
+  totalIncome: number = 0;
+  totalExpenses: number = 0;
+  expenseChangePercentage: string = '';
+  incomeChangePercentage: string = '';
+
   activeIncomeTab: boolean = true;
   activeExpenseTab: boolean = false;
 
@@ -38,9 +48,55 @@ export class DashboardOverviewComponent implements OnInit, AfterViewInit {
 
   ngOnInit(): void {
     theme$.subscribe((theme) => (this.theme = theme));
+    this.userID = this.authService.getUserId();
+
+    this.authService.userId$.subscribe((userId) => {
+      if (userId) {
+        this.userID = userId;
+        this.getTotalExpenses();
+        this.getTotalIncome();
+      }
+    });
+
     this.chartOptions = this.incomeChartOptions;
     this.updateBarChart();
     this.setGreetingMessage();
+  }
+
+  // TOTAL INCOME AND EXPENSE
+  getTotalExpenses(): void {
+    if (!this.userID) return;
+    this.transactionBudgetService.GetTotalExpense(this.userID).subscribe({
+      next: (val) => {
+        this.totalExpenses = val.totalCurrentExpenses;
+        const previousExpenses = val.totalPreviousExpenses;
+
+        if (previousExpenses > 0) {
+          const change =
+            ((previousExpenses - this.totalExpenses) / previousExpenses) * 100;
+          this.expenseChangePercentage = `${change.toFixed(
+            2
+          )}% from last month`;
+        } else this.expenseChangePercentage = 'N/A'; // Handle cases with no previous month data
+      },
+      error: (err) => this.toastr.error(err.error.error, 'Error'),
+    });
+  }
+  getTotalIncome(): void {
+    if (!this.userID) return;
+    this.transactionBudgetService.GetTotalIncome(this.userID).subscribe({
+      next: (val) => {
+        this.totalIncome = val.totalCurrentIncome;
+        const previousIncome = val.totalPreviousIncome;
+
+        if (previousIncome > 0) {
+          const change =
+            ((this.totalIncome - previousIncome) / this.totalIncome) * 100;
+          this.incomeChangePercentage = `${change.toFixed(2)}% from last month`;
+        } else this.incomeChangePercentage = 'N/A'; // Handle cases with no previous month data
+      },
+      error: (err) => this.toastr.error(err.error.error, 'Error'),
+    });
   }
 
   ngAfterViewInit(): void {
@@ -49,6 +105,8 @@ export class DashboardOverviewComponent implements OnInit, AfterViewInit {
 
   constructor(
     private authService: AuthenticationService,
+    private transactionBudgetService: TransactionBudgetService,
+    private toastr: ToastrService,
     private renderer: Renderer2
   ) {
     effect(() => {

@@ -45,6 +45,7 @@ export class BudgetComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private transactionBudgetService: TransactionBudgetService,
+    private authService: AuthenticationService,
     private datepipe: DatePipe,
     private toastr: ToastrService
   ) {}
@@ -83,31 +84,12 @@ export class BudgetComponent implements OnInit {
       date: [new Date(), Validators.required],
     });
 
-    this.userID = sessionStorage.getItem('userID');
+    this.userID = this.authService.getUserId();
 
     this.getColumns();
     this.loadBudgets();
 
     this.dataAdapter = new jqx.dataAdapter(this.budgetSource);
-  }
-
-  setMonthAndYear(
-    normalizedMonthAndYear: Date,
-    datepicker: MatDatepicker<Date>
-  ): void {
-    const ctrlValue = this.budgetForm.get('date')?.value;
-
-    // USE normalizedMonthAndYear DIRECTLY AS A JAVASCRIPT OBJECT
-    const selectedMonth = normalizedMonthAndYear.getMonth();
-    const selectedYear = normalizedMonthAndYear.getFullYear();
-
-    const newDate = new Date(ctrlValue);
-    newDate.setMonth(selectedMonth);
-    newDate.setFullYear(selectedYear);
-
-    this.budgetForm.get('date')?.setValue(newDate);
-    this.loadBudgets();
-    datepicker.close();
   }
 
   showFormError(controlName: string) {

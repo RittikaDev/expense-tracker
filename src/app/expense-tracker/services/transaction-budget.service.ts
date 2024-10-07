@@ -4,7 +4,10 @@ import { HttpClient } from '@angular/common/http';
 
 import {
   IBudget,
+  IIncome,
+  IIncomeCompare,
   ITransaction,
+  ITransactionCompare,
 } from '../../interfaces/TransactionBudget.interface';
 
 import { environment } from '../../../environments/environment';
@@ -31,6 +34,12 @@ export class TransactionBudgetService {
     return this.http.post(
       `${this.apiUrl}transactions/${userID}`,
       transactionData
+    );
+  }
+
+  GetTotalExpense(userID: string | null): Observable<ITransactionCompare> {
+    return this.http.get<ITransactionCompare>(
+      `${this.apiUrl}transactions/totalexpense/${userID}`
     );
   }
 
@@ -61,6 +70,26 @@ export class TransactionBudgetService {
   ) {
     return this.http.get(
       `${this.apiUrl}budgets/check-budget/${userID}/${category}/${amount}/${year}/${month}`
+    );
+  }
+  // INCOME SERVICES
+  GetIncomeList(
+    userID: string | null,
+    year: number,
+    month: number
+  ): Observable<IIncome[]> {
+    return this.http.get<IIncome[]>(
+      `${this.apiUrl}income/${userID}/${year}/${month}`
+    );
+  }
+
+  AddIncome(userID: string | null, incomeData: IIncome): Observable<any> {
+    return this.http.post(`${this.apiUrl}income/${userID}`, incomeData);
+  }
+
+  GetTotalIncome(userID: string | null): Observable<IIncomeCompare> {
+    return this.http.get<IIncomeCompare>(
+      `${this.apiUrl}income/totalincome/${userID}`
     );
   }
 }

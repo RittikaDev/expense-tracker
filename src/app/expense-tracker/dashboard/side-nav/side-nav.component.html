@@ -69,6 +69,12 @@
                     Dashboard
                   </li>
                   <li
+                    (click)="navigateToIncome()"
+                    class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-white"
+                  >
+                    Income Setup
+                  </li>
+                  <li
                     (click)="navigateToBudget()"
                     class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-white"
                   >
@@ -114,6 +120,15 @@
             <span class="ms-3">Dashboard</span>
           </li>
           <li
+            (click)="navigateToIncome()"
+            class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group"
+          >
+            <i
+              class="fas fa-cash-register text-xl text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white"
+            ></i>
+            <span class="ms-3">Income Setup</span>
+          </li>
+          <li
             class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group"
             (click)="navigateToBudget()"
           >
@@ -153,6 +168,9 @@
   </section>
 
   <div class="p-4 sm:ml-64 sm:mt-20 dark:bg-gray-700">
+    <p class="font-medium text-base text-capitalize mt-4">
+      {{ Heading }}
+    </p>
     <router-outlet></router-outlet>
   </div>
 </main>

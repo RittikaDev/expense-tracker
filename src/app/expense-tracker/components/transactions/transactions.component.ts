@@ -9,6 +9,7 @@ import { ToastrService } from 'ngx-toastr';
 import { ITransaction } from '../../../interfaces/TransactionBudget.interface';
 import { TransactionBudgetService } from '../../services/transaction-budget.service';
 import { DatePipe } from '@angular/common';
+import { AuthenticationService } from '../../services/authentication.service';
 
 @Component({
   selector: 'app-transactions',
@@ -53,7 +54,7 @@ export class TransactionsComponent implements OnInit {
   dataAdapter: any;
 
   ngOnInit(): void {
-    this.userID = sessionStorage.getItem('userID');
+    this.userID = this.authService.getUserId();
 
     this.getColumns();
     this.loadTransactions();
@@ -77,7 +78,8 @@ export class TransactionsComponent implements OnInit {
     private toastr: ToastrService,
     private spinner: NgxSpinnerService,
     private datepipe: DatePipe,
-    private transactionBudgetService: TransactionBudgetService
+    private transactionBudgetService: TransactionBudgetService,
+    private authService: AuthenticationService
   ) {}
 
   loadTransactions() {

@@ -1,9 +1,8 @@
-export interface ITransaction {
-  transactionId?: number;
+export interface IIncome {
+  id?: number;
   category: string;
   amount: number;
   date: string | null;
-  status: string;
 }
 
 export interface IBudget {
@@ -12,4 +11,21 @@ export interface IBudget {
   budget: number;
   date: string | null;
   actualSpending?: number;
+}
+
+export interface ITransaction {
+  transactionId?: number;
+  category: string;
+  amount: number;
+  date: string | null;
+  status: string;
+}
+
+export interface ITransactionCompare {
+  totalCurrentExpenses: number;
+  totalPreviousExpenses: number;
+}
+export interface IIncomeCompare {
+  totalCurrentIncome: number;
+  totalPreviousIncome: number;
 }

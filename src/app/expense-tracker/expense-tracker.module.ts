@@ -33,6 +33,9 @@ import { SideNavComponent } from './dashboard/side-nav/side-nav.component';
 import { DashboardOverviewComponent } from './components/dashboard-overview/dashboard-overview.component';
 import { TransactionsComponent } from './components/transactions/transactions.component';
 import { BudgetComponent } from './components/budget/budget.component';
+import { IncomeComponent } from './components/income/income.component';
+
+import { MonthPickerComponent } from './reusable-components/month-picker/month-picker.component';
 
 @NgModule({
   declarations: [
@@ -44,6 +47,8 @@ import { BudgetComponent } from './components/budget/budget.component';
     DashboardOverviewComponent,
     TransactionsComponent,
     BudgetComponent,
+    IncomeComponent,
+    MonthPickerComponent,
   ],
   imports: [
     CommonModule,
