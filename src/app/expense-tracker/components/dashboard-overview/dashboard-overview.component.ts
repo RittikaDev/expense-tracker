@@ -294,43 +294,60 @@ export class DashboardOverviewComponent implements OnInit, AfterViewInit {
     ];
 
     if (this.selectedTime === 'week') {
-      // (this.barChartOption.xAxis as any).data = [
-      //   'Week 1',
-      //   'Week 2',
-      //   'Week 3',
-      //   'Week 4',
-      // ];
-      // (this.barChartOption.series as any)[0].data = [150, 200, 250, 300];
-      // (this.barChartOption.series as any)[1].data = [100, 150, 200, 250];
-
       const allWeeks = ['Week 1', 'Week 2', 'Week 3', 'Week 4'];
-      const weeklyIncomeData: number[] = new Array(5).fill(0);
-      const weeklyExpenseData: number[] = new Array(5).fill(0);
+      const monthlyIncomeData: number[] = new Array(5).fill(0);
+      const monthlyExpenseData: number[] = new Array(5).fill(0);
 
+      // CURRENT MONTH AND YEAR
+      const currentDate = new Date();
+      const currentMonth = currentDate.getMonth();
+      const currentYear = currentDate.getFullYear();
+
+      // GETTING ALL TRANSACTIONS FOR CORRECT MONTH
       this.transactionBudgetService.GetAllTransactions(this.userID).subscribe({
         next: (expense: ITransaction[]) => {
           expense.forEach((transaction: ITransaction) => {
-            const date = new Date(transaction.date);
-            const weekIndex = this.getWeekNumber(date) - 1;
+            const dateString = transaction.date;
+            const [year, month, day] = dateString
+              .split('T')[0]
+              .split('-')
+              .map(Number);
+            const date = new Date(Date.UTC(year, month - 1, day)); // CONVERTING TO UTC TO GET THE CORRECT DATE FROM MONGO, OTHERIWISE ADDS (GMT+0600)
+            const monthIndex = date.getMonth();
+            const yearMap = date.getFullYear();
 
-            console.log(weekIndex);
-
-            weeklyExpenseData[weekIndex] += transaction.amount;
+            // FILTER TO INCLUDE ONLY TRANSACTIONS FROM THE CURRENT MONTH AND YEAR
+            if (monthIndex === currentMonth && yearMap === currentYear) {
+              const weekIndex = this.getWeekOfMonth(date) - 1;
+              if (weekIndex >= 0 && weekIndex < 5)
+                monthlyExpenseData[weekIndex] += transaction.amount;
+            }
           });
 
           this.transactionBudgetService.GetAllIncome(this.userID).subscribe({
             next: (income: IIncome[]) => {
               income.forEach((income: IIncome) => {
-                const date = new Date(income.date);
-                const weekIndex = this.getWeekNumber(date) - 1;
+                const dateString = income.date;
+                const [year, month, day] = dateString
+                  .split('T')[0]
+                  .split('-')
+                  .map(Number);
+                const date = new Date(Date.UTC(year, month - 1, day));
+                const monthIndex = date.getMonth();
+                const yearMap = date.getFullYear();
 
-                weeklyIncomeData[weekIndex] += income.amount;
+                // FILTER TO INCLUDE ONLY INCOMES FROM THE CURRENT MONTH AND YEAR
+                if (monthIndex === currentMonth && yearMap === currentYear) {
+                  const weekIndex = this.getWeekOfMonth(date) - 1;
+                  if (weekIndex >= 0 && weekIndex < 5)
+                    monthlyIncomeData[weekIndex] += income.amount;
+                }
               });
 
               this.updateBarChartData(
                 'week',
-                weeklyIncomeData,
-                weeklyExpenseData,
+                monthlyIncomeData,
+                monthlyExpenseData,
                 allWeeks
               );
             },
@@ -386,15 +403,11 @@ export class DashboardOverviewComponent implements OnInit, AfterViewInit {
     this.barChartOption = { ...this.barChartOption };
   }
 
-  getWeekNumber(d: Date): number {
-    d = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
-    const dayNum = d.getUTCDay() || 7;
-    d.setUTCDate(d.getUTCDate() + 4 - dayNum);
-    const yearStart = new Date(Date.UTC(d.getUTCFullYear(), 0, 1));
-    const weekNo = Math.ceil(
-      ((d.getTime() - yearStart.getTime()) / 86400000 + 1) / 7
-    );
-    return weekNo;
+  getWeekOfMonth(date: Date): number {
+    const firstDayOfMonth = new Date(date.getFullYear(), date.getMonth(), 1);
+    const dayOfMonth = date.getDate();
+    const firstDayOfWeek = firstDayOfMonth.getDay();
+    return Math.ceil((dayOfMonth + firstDayOfWeek) / 7);
   }
 
   filterTransactionsByMonth(
