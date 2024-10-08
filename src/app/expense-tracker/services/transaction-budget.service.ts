@@ -27,6 +27,16 @@ export class TransactionBudgetService {
     );
   }
 
+  GetTransactionMonthWise(
+    userID: string | null,
+    year: number,
+    month: number
+  ): Observable<ITransaction[]> {
+    return this.http.get<ITransaction[]>(
+      `${this.apiUrl}transactions/${userID}/${year}/${month}`
+    );
+  }
+
   AddTransaction(
     userID: string | null,
     transactionData: ITransaction[]
@@ -73,6 +83,10 @@ export class TransactionBudgetService {
     );
   }
   // INCOME SERVICES
+  GetAllIncome(userID: string | null): Observable<ITransaction[]> {
+    return this.http.get<ITransaction[]>(`${this.apiUrl}income/${userID}`);
+  }
+
   GetIncomeList(
     userID: string | null,
     year: number,

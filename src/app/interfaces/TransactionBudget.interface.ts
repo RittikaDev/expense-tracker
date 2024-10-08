@@ -2,7 +2,7 @@ export interface IIncome {
   id?: number;
   category: string;
   amount: number;
-  date: string | null;
+  date: any;
 }
 
 export interface IBudget {
@@ -17,7 +17,7 @@ export interface ITransaction {
   transactionId?: number;
   category: string;
   amount: number;
-  date: string | null;
+  date: any;
   status: string;
 }
 
