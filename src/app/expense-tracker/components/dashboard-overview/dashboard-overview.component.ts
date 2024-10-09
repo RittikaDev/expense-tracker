@@ -30,7 +30,7 @@ import {
   ],
 })
 export class DashboardOverviewComponent implements OnInit, AfterViewInit {
-  @ViewChild('textSection') textSection!: ElementRef;
+  @ViewChild('textSection') textSection!: ElementRef; // WELCOME ADMIN TEXT
 
   theme: ITheme = 'dark';
   coolTheme = CoolTheme;
@@ -48,8 +48,8 @@ export class DashboardOverviewComponent implements OnInit, AfterViewInit {
   incomeList: IIncome[] = [];
   transactionList: ITransaction[] = [];
 
-  incomeYearList: IIncome[] = [];
-  transactionYearList: ITransaction[] = [];
+  transactionForBarChart: ITransaction[] = [];
+  incomeForBarChart: IIncome[] = [];
 
   selectedTime: string = 'week';
 
@@ -70,10 +70,11 @@ export class DashboardOverviewComponent implements OnInit, AfterViewInit {
         const month = new Date().getMonth() + 1;
         this.loadIncomeList(year, month);
         this.loadTransactionList(year, month);
+
+        this.getAllTransactionsForBarChart();
       }
     });
 
-    this.updateBarChart();
     this.setGreetingMessage();
   }
 
@@ -229,6 +230,7 @@ export class DashboardOverviewComponent implements OnInit, AfterViewInit {
     else this.greetingMessage = 'Good evening';
   }
 
+  // WELCOME ADMIN TEXT ANIMATION
   resetAnimation() {
     const element = this.textSection.nativeElement;
     this.renderer.removeClass(element, 'animate');
@@ -277,6 +279,23 @@ export class DashboardOverviewComponent implements OnInit, AfterViewInit {
       },
     ],
   };
+
+  getAllTransactionsForBarChart() {
+    // FETCHING TRANSACTIONS
+    this.transactionBudgetService.GetAllTransactions(this.userID).subscribe({
+      next: (expense: ITransaction[]) => {
+        this.transactionForBarChart = expense;
+        // FETCHING INCOME
+        this.transactionBudgetService.GetAllIncome(this.userID).subscribe({
+          next: (income: IIncome[]) => {
+            this.incomeForBarChart = income;
+            this.updateBarChart();
+          },
+        });
+      },
+    });
+  }
+
   updateBarChart() {
     const allMonths = [
       'January',
@@ -303,101 +322,65 @@ export class DashboardOverviewComponent implements OnInit, AfterViewInit {
       const currentMonth = currentDate.getMonth();
       const currentYear = currentDate.getFullYear();
 
-      // GETTING ALL TRANSACTIONS FOR CORRECT MONTH
-      this.transactionBudgetService.GetAllTransactions(this.userID).subscribe({
-        next: (expense: ITransaction[]) => {
-          expense.forEach((transaction: ITransaction) => {
-            const dateString = transaction.date;
-            const [year, month, day] = dateString
-              .split('T')[0]
-              .split('-')
-              .map(Number);
-            const date = new Date(Date.UTC(year, month - 1, day)); // CONVERTING TO UTC TO GET THE CORRECT DATE FROM MONGO, OTHERIWISE ADDS (GMT+0600)
-            const monthIndex = date.getMonth();
-            const yearMap = date.getFullYear();
+      this.transactionForBarChart.forEach((transaction: ITransaction) => {
+        const dateString = transaction.date;
+        const [year, month, day] = dateString
+          .split('T')[0]
+          .split('-')
+          .map(Number);
+        const date = new Date(Date.UTC(year, month - 1, day)); // CONVERTING TO UTC TO GET THE CORRECT DATE FROM MONGO, OTHERIWISE ADDS (GMT+0600)
+        const monthIndex = date.getMonth();
+        const yearMap = date.getFullYear();
 
-            // FILTER TO INCLUDE ONLY TRANSACTIONS FROM THE CURRENT MONTH AND YEAR
-            if (monthIndex === currentMonth && yearMap === currentYear) {
-              const weekIndex = this.getWeekOfMonth(date) - 1;
-              if (weekIndex >= 0 && weekIndex < 5)
-                monthlyExpenseData[weekIndex] += transaction.amount;
-            }
-          });
-
-          this.transactionBudgetService.GetAllIncome(this.userID).subscribe({
-            next: (income: IIncome[]) => {
-              income.forEach((income: IIncome) => {
-                const dateString = income.date;
-                const [year, month, day] = dateString
-                  .split('T')[0]
-                  .split('-')
-                  .map(Number);
-                const date = new Date(Date.UTC(year, month - 1, day));
-                const monthIndex = date.getMonth();
-                const yearMap = date.getFullYear();
-
-                // FILTER TO INCLUDE ONLY INCOMES FROM THE CURRENT MONTH AND YEAR
-                if (monthIndex === currentMonth && yearMap === currentYear) {
-                  const weekIndex = this.getWeekOfMonth(date) - 1;
-                  if (weekIndex >= 0 && weekIndex < 5)
-                    monthlyIncomeData[weekIndex] += income.amount;
-                }
-              });
-
-              this.updateBarChartData(
-                'week',
-                monthlyIncomeData,
-                monthlyExpenseData,
-                allWeeks
-              );
-            },
-            error: (err) => this.toastr.error(err.error.error, 'Error'),
-          });
-        },
-        error: (err) => this.toastr.error(err.error.error, 'Error'),
+        // FILTER TO INCLUDE ONLY TRANSACTIONS FROM THE CURRENT MONTH AND YEAR
+        if (monthIndex === currentMonth && yearMap === currentYear) {
+          const weekIndex = this.getWeekOfMonth(date) - 1;
+          if (weekIndex >= 0 && weekIndex < 5)
+            monthlyExpenseData[weekIndex] += transaction.amount;
+        }
       });
+
+      this.incomeForBarChart.forEach((income: IIncome) => {
+        const dateString = income.date;
+        const [year, month, day] = dateString
+          .split('T')[0]
+          .split('-')
+          .map(Number);
+        const date = new Date(Date.UTC(year, month - 1, day));
+        const monthIndex = date.getMonth();
+        const yearMap = date.getFullYear();
+
+        // FILTER TO INCLUDE ONLY INCOMES FROM THE CURRENT MONTH AND YEAR
+        if (monthIndex === currentMonth && yearMap === currentYear) {
+          const weekIndex = this.getWeekOfMonth(date) - 1;
+          if (weekIndex >= 0 && weekIndex < 5)
+            monthlyIncomeData[weekIndex] += income.amount;
+        }
+      });
+
+      this.updateBarChartData(monthlyIncomeData, monthlyExpenseData, allWeeks);
     } else {
       const monthlyIncomeData: number[] = new Array(12).fill(0);
       const monthlyExpenseData: number[] = new Array(12).fill(0);
+      // PROCESSING TRANSACTION DATA
+      this.transactionForBarChart.forEach((transaction: ITransaction) => {
+        const date = new Date(transaction.date);
+        const monthIndex = date.getMonth();
+        const year = date.getFullYear();
 
-      // FETCHING TRANSACTIONS
-      this.transactionBudgetService.GetAllTransactions(this.userID).subscribe({
-        next: (expense: ITransaction[]) => {
-          // PROCESSING TRANSACTION DATA
-          expense.forEach((transaction: ITransaction) => {
-            const date = new Date(transaction.date);
-            const monthIndex = date.getMonth();
-            const year = date.getFullYear();
-
-            monthlyExpenseData[monthIndex] += transaction.amount;
-          });
-
-          // FETCHING INCOME
-          this.transactionBudgetService.GetAllIncome(this.userID).subscribe({
-            next: (inc: IIncome[]) => {
-              // PROCESSING INCOME DATA
-              inc.forEach((income: IIncome) => {
-                const date = new Date(income.date);
-                const monthIndex = date.getMonth();
-                const year = date.getFullYear();
-                monthlyIncomeData[monthIndex] += income.amount;
-              });
-
-              // UPDATING CHART
-              this.updateBarChartData(
-                'month',
-                monthlyIncomeData,
-                monthlyExpenseData,
-                allMonths
-              );
-            },
-            error: (err) =>
-              this.toastr.error(err.error.error, 'Error fetching income data'),
-          });
-        },
-        error: (err) =>
-          this.toastr.error(err.error.error, 'Error fetching transaction data'),
+        monthlyExpenseData[monthIndex] += transaction.amount;
       });
+
+      // PROCESSING INCOME DATA
+      this.incomeForBarChart.forEach((income: IIncome) => {
+        const date = new Date(income.date);
+        const monthIndex = date.getMonth();
+        const year = date.getFullYear();
+        monthlyIncomeData[monthIndex] += income.amount;
+      });
+
+      // UPDATING CHART
+      this.updateBarChartData(monthlyIncomeData, monthlyExpenseData, allMonths);
     }
 
     this.barChartOption = { ...this.barChartOption };
@@ -424,7 +407,6 @@ export class DashboardOverviewComponent implements OnInit, AfterViewInit {
   }
 
   updateBarChartData(
-    timeframe: string,
     incomeData: number[],
     expenseData: number[],
     xAxisLabels: string[]
