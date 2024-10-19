@@ -13,6 +13,7 @@ import { TransactionsComponent } from './components/transactions/transactions.co
 import { BudgetComponent } from './components/budget/budget.component';
 import { AuthGuard } from '../guard/auth.guard';
 import { IncomeComponent } from './components/income/income.component';
+import { TestingComponent } from './components/testing/testing.component';
 
 const routes: Routes = [
   { path: 'login', component: LoginComponent },
@@ -41,7 +42,8 @@ const routes: Routes = [
       },
       {
         path: 'transactions',
-        component: TransactionsComponent,
+        // component: TransactionsComponent,
+        component: TestingComponent,
         canActivate: [AuthGuard],
         data: { title: 'Transactions' },
       },

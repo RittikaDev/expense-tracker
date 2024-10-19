@@ -36,6 +36,7 @@ import { BudgetComponent } from './components/budget/budget.component';
 import { IncomeComponent } from './components/income/income.component';
 
 import { MonthPickerComponent } from './reusable-components/month-picker/month-picker.component';
+import { TestingComponent } from './components/testing/testing.component';
 
 @NgModule({
   declarations: [
@@ -49,6 +50,7 @@ import { MonthPickerComponent } from './reusable-components/month-picker/month-p
     BudgetComponent,
     IncomeComponent,
     MonthPickerComponent,
+    TestingComponent,
   ],
   imports: [
     CommonModule,

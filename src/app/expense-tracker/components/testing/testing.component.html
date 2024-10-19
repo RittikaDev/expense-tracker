@@ -123,13 +123,17 @@
       Save Data
     </button>
   </div>
+
   <jqxGrid
     #TransactionGrid
     [selectionmode]="'checkbox'"
-    [theme]="'energyblue'"
-    [source]="dataAdapter"
-    [columns]="column"
     [autoheight]="true"
+    [source]="dataAdapter"
+    [columns]="columns"
+    [rowdetails]="true"
+    [rowsheight]="35"
+    [initrowdetails]="initRowDetails"
+    [rowdetailstemplate]="rowdetailstemplate"
     [pageable]="true"
     [altrows]="true"
     [filterable]="true"
@@ -138,7 +142,6 @@
     [pagesizeoptions]="['10', '15', '20', '25']"
     [pagesize]="15"
     [pagerheight]="15"
-    [autoheight]="true"
     [columnsresize]="true"
     [altrows]="true"
     [editable]="true"
