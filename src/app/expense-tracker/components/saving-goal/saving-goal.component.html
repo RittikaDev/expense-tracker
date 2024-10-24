@@ -81,39 +81,38 @@
     </div>
   </div>
   @if (goalSet) {
-
-  <div class="slide-up reveal">
-    <div class="box" id="one">
-      Income
-      <div class="mt-4">
-        {{ totalIncome }}
+  <section class="flex justify-center">
+    <div>
+      <div class="slide-up reveal">
+        <div class="box" id="one">
+          Income
+          <div class="mt-4">
+            {{ totalIncome }}
+          </div>
+        </div>
+        <div class="box" id="two">
+          Expense
+          <div class="mt-4">
+            {{ totalExpenses }}
+          </div>
+        </div>
+        <div class="box" id="three">
+          Savings
+          <div class="mt-4">
+            {{ cumulativeSavings }}
+          </div>
+        </div>
+      </div>
+      <div class="container">
+        <div
+          class="range progress-bar"
+          [ngStyle]="{ '--p': savingsPercentage }"
+        >
+          <div class="range__label">Progress</div>
+        </div>
       </div>
     </div>
-    <div class="box" id="two">
-      Expense
-      <div class="mt-4">
-        {{ totalExpenses }}
-      </div>
-    </div>
-    <div class="box" id="three">
-      Savings
-      <div class="mt-4">
-        {{ cumulativeSavings }}
-      </div>
-    </div>
-  </div>
-
-  <div class="container">
-    <!-- <div class="progress progress-striped">
-      <div
-        class="progress-bar"
-        [ngClass]="{ animate: savingsPercentage > 0 }"
-        [ngStyle]="{ width: savingsPercentage + '%' }"
-      ></div>
-    </div> -->
-    <div class="range progress-bar" [ngStyle]="{ '--p': savingsPercentage }">
-      <div class="range__label">Progress</div>
-    </div>
-  </div>
+    <div id="monthlySavingsChart" class="w-full h-96 ms-12 mt-12"></div>
+  </section>
   }
 </section>

@@ -68,20 +68,6 @@ export class SavingGoalComponent implements OnInit {
   setGoal() {
     if (this.goalForm.valid) {
       this.goalValue = this.goalForm.value.goal;
-      // this.goalSet = true;
-
-      // const goalTextElement = document.querySelector(
-      //   '.goal-text'
-      // ) as HTMLElement;
-      // goalTextElement.classList.add('show');
-
-      // const progressCircle = document.querySelector(
-      //   '.progress-circle'
-      // ) as HTMLElement;
-      // progressCircle.style.transform = 'translateX(-120px)';
-
-      // this.goalSetDate = this.goalForm.value.startDate;
-      // this.goalDeadline = this.goalForm.value.endDate;
 
       const goalData = {
         userId: this.userID,
@@ -139,7 +125,6 @@ export class SavingGoalComponent implements OnInit {
   }
 
   setProgressBarData() {
-    // this.goalValue = this.goalForm.value.goal;
     this.goalSet = true;
 
     const goalTextElement = document.querySelector('.goal-text') as HTMLElement;
@@ -178,7 +163,6 @@ export class SavingGoalComponent implements OnInit {
     const endYear = this.goalDeadline.getFullYear();
     const endMonth = this.goalDeadline.getMonth() + 1;
 
-    // Fetch savings data for the selected month range
     this.transactionBudgetService
       .GetMonthlySavings(this.userID, startYear, startMonth, endYear, endMonth)
       .subscribe({
@@ -188,6 +172,7 @@ export class SavingGoalComponent implements OnInit {
           this.cumulativeSavings = this.totalIncome - this.totalExpenses;
 
           this.updateSavingsPercentage();
+          this.calculateMonthlySavingsTarget();
         },
         error: (err) => this.toastr.error(err.error.error, 'Error'),
       });
@@ -216,5 +201,89 @@ export class SavingGoalComponent implements OnInit {
       void progressBar.offsetWidth; // This forces a reflow
       progressBar.classList.add('animate');
     }
+  }
+
+  //  BAR SETUP
+  calculateMonthsDifference(start: Date | null, end: Date | null): number {
+    if (!start || !end) return 0;
+    return (
+      (end.getFullYear() - start.getFullYear()) * 12 +
+      (end.getMonth() - start.getMonth()) +
+      1
+    );
+  }
+
+  calculateMonthlySavingsTarget() {
+    // CHECK IF SAVINGS ALREADY EXISTS FOR CURRENT MONTH
+    const savedInCurrentMonth = this.cumulativeSavings;
+
+    let totalSavingsRemaining = this.goalValue - savedInCurrentMonth;
+    if (totalSavingsRemaining < 0) totalSavingsRemaining = 0;
+
+    let months = this.calculateMonthsDifference(
+      this.goalSetDate,
+      this.goalDeadline
+    );
+
+    if (savedInCurrentMonth > 0) {
+      months -= 1; // EXCULDE CURRENT MONTH
+      this.goalSetDate = this.addMonths(this.goalSetDate, 1); // MOVE START DATE TO NEXT MONTH
+    }
+
+    // DISTRIBUTE THE REMAINING SAVINGS ACROSS HE REST OF THE MONTHS
+    const savingsPerMonth = totalSavingsRemaining / months;
+    this.monthlySavingsTarget = Array(months).fill(savingsPerMonth); // SET SAVINGS PER MONTH TARGET
+
+    // GET MONTH NAMES BASED ON THE ADJUSTED START DATE AND NOM
+    const monthNames = this.getMonthNames(this.goalSetDate, months);
+    this.renderChart(monthNames); // RENDER CHART WITH UPDATED DATA
+  }
+
+  // HELPER METHODS TO MOVE THE START DATE TO NEXT MONTH
+  addMonths(date: Date | null, months: number): Date | null {
+    if (!date) return null;
+    const result = new Date(date);
+    result.setMonth(result.getMonth() + months);
+    return result;
+  }
+
+  getMonthNames(startDate: Date | null, numberOfMonths: number): string[] {
+    if (!startDate) return [];
+    const monthNames: string[] = [];
+    let currentMonth = startDate.getMonth();
+    let currentYear = startDate.getFullYear();
+
+    for (let i = 0; i < numberOfMonths; i++) {
+      monthNames.push(
+        new Date(currentYear, currentMonth, 1).toLocaleString('default', {
+          month: 'long',
+          year: 'numeric',
+        })
+      );
+      currentMonth++;
+
+      if (currentMonth > 11) {
+        currentMonth = 0;
+        currentYear++;
+      }
+    }
+
+    return monthNames;
+  }
+
+  renderChart(monthNames: string[]) {
+    const chartElement = document.getElementById(
+      'monthlySavingsChart'
+    ) as HTMLElement;
+    const chart = echarts.init(chartElement);
+
+    const option = {
+      title: { text: 'Monthly Savings Target' },
+      xAxis: { type: 'category', data: monthNames },
+      yAxis: { type: 'value' },
+      series: [{ data: this.monthlySavingsTarget, type: 'bar' }],
+    };
+
+    chart.setOption(option);
   }
 }
