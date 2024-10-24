@@ -11,6 +11,7 @@ import {
 } from '../../interfaces/TransactionBudget.interface';
 
 import { environment } from '../../../environments/environment';
+import { ISavingsGoal } from '../../interfaces/ISavings';
 
 @Injectable({
   providedIn: 'root',
@@ -105,5 +106,32 @@ export class TransactionBudgetService {
     return this.http.get<IIncomeCompare>(
       `${this.apiUrl}income/totalincome/${userID}`
     );
+  }
+  // INCOME SERVICES
+
+  GetSavingGoalMonthWise(userID: string | null, savingData: ISavingsGoal) {
+    return this.http.post(
+      `${this.apiUrl}savinggoal/getmonthData/${userID}`,
+      savingData
+    );
+  }
+
+  GetMonthlySavings(
+    userID: string | null,
+    startYear: number,
+    startMonth: number,
+    endYear: number,
+    endMonth: number
+  ) {
+    return this.http.get<any>(
+      `${this.apiUrl}savinggoal/${userID}/${startYear}/${startMonth}/${endYear}/${endMonth}`
+    );
+  }
+
+  AddSavingsGoal(
+    userID: string | null,
+    savingData: ISavingsGoal
+  ): Observable<any> {
+    return this.http.post(`${this.apiUrl}savinggoal/${userID}`, savingData);
   }
 }

@@ -1,0 +1,27 @@
+<mat-form-field appearance="outline">
+  <mat-label>Select Month Range</mat-label>
+  <input
+    matInput
+    [matDatepicker]="picker"
+    readonly
+    [value]="formatMonthRange()"
+    placeholder="Choose a range"
+  />
+  <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+  <mat-datepicker
+    #picker
+    startView="multi-year"
+    (monthSelected)="setMonthAndYear($event, picker)"
+    panelClass="month-picker"
+    [startAt]="startMonth || endMonth"
+  ></mat-datepicker>
+</mat-form-field>
+
+<div *ngIf="startMonth && endMonth">
+  <p>
+    Selected Range: {{ formatDate(startMonth) }} to {{ formatDate(endMonth) }}
+  </p>
+  <button mat-raised-button color="primary" (click)="resetRange()">
+    Reset Range
+  </button>
+</div>

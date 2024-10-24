@@ -1,0 +1,375 @@
+@keyframes progress {
+  0% {
+    --percentage: 0;
+  }
+  100% {
+    --percentage: var(--value);
+  }
+}
+
+@property --percentage {
+  syntax: "<number>";
+  inherits: true;
+  initial-value: 0;
+}
+
+[role="progressbar"] {
+  --percentage: var(--value);
+  --primary: #369;
+  --secondary: #adf;
+  --size: 80px;
+  animation: progress 2s forwards;
+  width: var(--size);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  position: relative;
+  overflow: hidden;
+  display: grid;
+  place-items: center;
+}
+
+[role="progressbar"]::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: conic-gradient(
+    var(--primary) calc(var(--percentage) * 1%),
+    var(--secondary) 0
+  );
+  mask: radial-gradient(white 55%, transparent 0);
+  mask-mode: alpha;
+  -webkit-mask: radial-gradient(#0000 55%, #000 0);
+  -webkit-mask-mode: alpha;
+}
+
+/* Show icon only when progress is 100% */
+.show-icon {
+  content: "\f058";
+  font-family: "Font Awesome 6 Free";
+  font-weight: 900;
+  font-size: calc(var(--size) / 3);
+  display: inline-block;
+  vertical-align: middle;
+  opacity: 0;
+  transition: opacity 0.5s ease, transform 0.5s ease;
+  position: absolute;
+}
+
+/* Show icon when value is 100 */
+[style*="--value: 100"] .show-icon {
+  opacity: 1;
+  transform: scale(1.1);
+}
+
+.progress-circle {
+  transition: transform 0.5s ease;
+}
+
+.goal-text {
+  position: absolute;
+  left: 50%;
+  opacity: 0;
+  transform: translateX(-60px);
+  transition: opacity 0.5s ease, transform 0.5s ease;
+}
+
+// TEST DESIGN
+.goal-text.show {
+  opacity: 1;
+  transform: translateX(-10px);
+}
+
+.goal-text.hidden {
+  opacity: 0;
+}
+.spin {
+  animation: spin 1s linear infinite;
+}
+
+// SAVING GOAL PROGRESS BAR
+$background: #2c303a;
+
+body {
+  font-family: "Montserrat", sans-serif;
+  background: $background;
+}
+
+.container {
+  margin: 80px auto;
+  width: 500px;
+  text-align: center;
+}
+
+.progress {
+  padding: 6px;
+  background: rgba(0, 0, 0, 0.25);
+  border-radius: 6px;
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.25),
+    0 1px rgba(255, 255, 255, 0.08);
+}
+
+.progress-bar {
+  height: 18px;
+  background-color: #ee303c;
+  border-radius: 4px;
+  transition: width 0.4s linear;
+}
+
+.progress-striped .progress-bar {
+  background-color: #fcbc51;
+  width: 100%;
+  background-image: linear-gradient(
+    45deg,
+    rgb(252, 163, 17) 25%,
+    transparent 25%,
+    transparent 50%,
+    rgb(252, 163, 17) 50%,
+    rgb(252, 163, 17) 75%,
+    transparent 75%,
+    transparent
+  );
+}
+
+.progress-bar.animate {
+  animation: progressAnimationStrike 2s forwards; /* Adjust the duration as needed */
+}
+
+@keyframes progressAnimationStrike {
+  from {
+    width: 0;
+  }
+  to {
+    width: 100%;
+  }
+}
+
+@keyframes progressAnimationStrike {
+  from {
+    width: 0;
+  }
+  to {
+    width: 100%;
+  }
+}
+$green: #4cd964;
+$turquoise: #5ac8fa;
+$blue: #007aff;
+$light-blue: #7dc8e8;
+$purple: #5856d6;
+$red: #ff2d55;
+
+@keyframes colorAnimation {
+  0% {
+    background-image: linear-gradient(
+      to right,
+      $green,
+      $turquoise,
+      $blue,
+      $light-blue,
+      $purple,
+      $red
+    );
+  }
+  20% {
+    background-image: linear-gradient(
+      to right,
+      $turquoise,
+      $blue,
+      $light-blue,
+      $purple,
+      $red,
+      $green
+    );
+  }
+  40% {
+    background-image: linear-gradient(
+      to right,
+      $blue,
+      $light-blue,
+      $purple,
+      $red,
+      $green,
+      $turquoise
+    );
+  }
+  60% {
+    background-image: linear-gradient(
+      to right,
+      $light-blue,
+      $purple,
+      $red,
+      $green,
+      $turquoise,
+      $blue
+    );
+  }
+  100% {
+    background-image: linear-gradient(
+      to right,
+      $purple,
+      $red,
+      $green,
+      $turquoise,
+      $blue,
+      $light-blue
+    );
+  }
+}
+
+h1 {
+  font-size: 26px;
+  font-family: "Gambetta", serif;
+  letter-spacing: 2px;
+  transition: 700ms ease;
+  font-variation-settings: "wght" 311;
+  margin-bottom: 0.8rem;
+  color: #0369a1;
+  font-weight: 600;
+}
+
+h1:hover {
+  font-variation-settings: "wght" 582;
+  letter-spacing: 5px;
+}
+
+// SLIDE UP ANIMATION
+.slide-up {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1.5rem;
+  margin-top: 20vh;
+}
+
+.box {
+  padding: 3rem 5rem;
+  font-size: 1.5rem;
+  text-align: center;
+  border-radius: 5px;
+  box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
+
+  &#one {
+    background-color: #cce8d4;
+    color: #57a846;
+  }
+  &#two {
+    background-color: #fbe2e4;
+    color: #ef5855;
+  }
+  &#three {
+    background-color: #e6eafe;
+    color: #0679fb;
+  }
+}
+
+.reveal {
+  animation: 1.5s revealup ease;
+  animation-fill-mode: forwards;
+}
+
+@keyframes revealup {
+  from {
+    opacity: 0;
+    transform: translatey(-5%);
+  }
+  to {
+    opacity: 1;
+    transform: translatey(-60%);
+  }
+}
+
+.refresh {
+  display: flex;
+  justify-content: center;
+  margin-top: 1.5rem;
+  input {
+    border: none;
+    padding: 0.5rem;
+    &:hover {
+      cursor: pointer;
+    }
+  }
+}
+
+// __________________________________________________________________________
+// PROGRESS BAR
+
+.range {
+  position: relative;
+  padding: 6px;
+  background: rgba(0, 0, 0, 0.25);
+  border-radius: 6px;
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.25),
+    0 1px rgba(255, 255, 255, 0.08);
+  height: 30px;
+  font-family: "Orbitron", monospace;
+
+  &:before {
+    --width: calc(var(--p) * 1%);
+
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 0;
+    height: 100%;
+    background-color: #fcbc51;
+    width: 100%;
+    background-image: linear-gradient(
+      45deg,
+      rgb(252, 163, 17) 25%,
+      transparent 25%,
+      transparent 50%,
+      rgb(252, 163, 17) 50%,
+      rgb(252, 163, 17) 75%,
+      transparent 75%,
+      transparent
+    );
+    z-index: 0;
+    animation: load 0.5s forwards linear, glitch 2s infinite linear;
+  }
+
+  &:after {
+    counter-reset: progress var(--p);
+    content: counter(progress) "%";
+    color: #000;
+    position: absolute;
+    left: 5%;
+    top: 50%;
+    transform: translateY(-50%) skewX(-30deg);
+    z-index: 1;
+  }
+
+  &__label {
+    transform: translateY(-150%);
+    line-height: 1.5;
+  }
+}
+
+@keyframes load {
+  to {
+    width: var(--width);
+  }
+}
+
+@keyframes glitch {
+  0%,
+  5% {
+    transform: translate(0, 0);
+  }
+  1% {
+    transform: translate(-5%, -10%);
+  }
+  2% {
+    transform: translate(10%, 30%);
+  }
+  3% {
+    transform: translate(-43%, 10%);
+  }
+  4% {
+    transform: translate(2%, -23%);
+  }
+}

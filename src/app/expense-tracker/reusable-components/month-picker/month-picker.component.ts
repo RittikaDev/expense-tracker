@@ -13,9 +13,7 @@ import { MatDatepicker } from '@angular/material/datepicker';
 import { CustomDateAdapter } from '../../utilities/CustomDateAdapter';
 
 export const MY_FORMATS = {
-  parse: {
-    dateInput: 'MMMM/YYYY',
-  },
+  parse: { dateInput: 'MMMM/YYYY' },
   display: {
     dateInput: 'MMMM/YYYY',
     monthYearLabel: 'MMM YYYY',

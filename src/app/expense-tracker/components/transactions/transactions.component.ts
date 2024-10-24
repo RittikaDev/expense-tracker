@@ -55,22 +55,25 @@ export class TransactionsComponent implements OnInit {
 
   ngOnInit(): void {
     this.userID = this.authService.getUserId();
+    this.authService.userId$.subscribe((userId) => {
+      if (userId) {
+        this.userID = userId;
+        this.getColumns();
+        this.loadTransactions();
+        this.dataAdapter = new jqx.dataAdapter(this.transactionSource);
+      }
+    });
+    // this.source.map((data: ITransaction) => {
+    //   if (data.status === 'Success') this.totalExpense += data.amount;
+    // });
 
-    this.getColumns();
-    this.loadTransactions();
-    this.dataAdapter = new jqx.dataAdapter(this.transactionSource);
+    // this.totalAmount = this.totalIncome - this.totalExpense;
 
     this.transactionForm = this.fb.group({
       category: ['', [Validators.required]],
       amount: [0, Validators.required],
       date: ['', Validators.required],
     });
-
-    this.source.map((data: ITransaction) => {
-      if (data.status === 'Success') this.totalExpense += data.amount;
-    });
-
-    this.totalAmount = this.totalIncome - this.totalExpense;
   }
 
   constructor(
@@ -89,6 +92,13 @@ export class TransactionsComponent implements OnInit {
           this.toastr.info('No transaction was found for this user');
 
         this.source = data;
+
+        this.source.map((data: ITransaction) => {
+          if (data.status === 'Success') this.totalExpense += data.amount;
+        });
+
+        this.totalAmount = this.totalIncome - this.totalExpense;
+
         this.transactionSource.localdata = this.source;
         this.dataAdapter = new jqx.dataAdapter(this.source);
         this.TransactionGrid.updatebounddata();

@@ -34,9 +34,11 @@ import { DashboardOverviewComponent } from './components/dashboard-overview/dash
 import { TransactionsComponent } from './components/transactions/transactions.component';
 import { BudgetComponent } from './components/budget/budget.component';
 import { IncomeComponent } from './components/income/income.component';
+import { TestingComponent } from './components/testing/testing.component';
+import { SavingGoalComponent } from './components/saving-goal/saving-goal.component';
 
 import { MonthPickerComponent } from './reusable-components/month-picker/month-picker.component';
-import { TestingComponent } from './components/testing/testing.component';
+import { MonthRangePickerComponent } from './reusable-components/month-range-picker/month-range-picker.component';
 
 @NgModule({
   declarations: [
@@ -50,7 +52,9 @@ import { TestingComponent } from './components/testing/testing.component';
     BudgetComponent,
     IncomeComponent,
     MonthPickerComponent,
+    MonthRangePickerComponent,
     TestingComponent,
+    SavingGoalComponent,
   ],
   imports: [
     CommonModule,

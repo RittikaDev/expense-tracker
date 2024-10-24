@@ -81,15 +81,44 @@ export class TestingComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    this.userID = this.authService.getUserId();
+
+    this.getColumns();
+    this.loadTransactions();
+    this.dataAdapter = new jqx.dataAdapter(this.transource);
+
     this.transactionForm = this.fb.group({
       category: ['', [Validators.required]],
       amount: [0, Validators.required],
       date: ['', Validators.required],
     });
+
+    this.transource.map((data: ITransaction) => {
+      if (data.status === 'Success') this.totalExpense += data.amount;
+    });
+
+    this.totalAmount = this.totalIncome - this.totalExpense;
   }
 
   ngAfterViewInit() {
     this.bindButtonClicks();
+  }
+
+  loadTransactions() {
+    this.transactionBudgetService.GetAllTransactions(this.userID).subscribe({
+      next: (data) => {
+        if (data.length <= 0)
+          this.toastr.info('No transaction was found for this user');
+
+        console.log(data);
+        this.transource = data;
+        console.log(this.transource);
+        this.source.localdata = this.transource;
+        this.dataAdapter = new jqx.dataAdapter(this.source);
+        this.TransactionGrid.updatebounddata('cells');
+      },
+      error: (err) => this.toastr.error(err.error.error, 'Error'),
+    });
   }
 
   bindButtonClicks() {
@@ -199,64 +228,66 @@ export class TestingComponent implements OnInit {
     this.TransactionGrid.showrowdetails(0);
   };
 
-  columns: any[] = [
-    {
-      text: 'Category',
-      datafield: 'category',
-      width: '30%',
-      cellsalign: 'center',
-      align: 'center',
-    },
-    {
-      text: 'Amount',
-      datafield: 'amount',
-      width: '20%',
-      cellsalign: 'center',
-      align: 'center',
-    },
-    {
-      text: 'Date',
-      datafield: 'date',
-      width: '25%',
-      cellsformat: 'dd-MMM-yyyy',
-      cellsalign: 'center',
-      align: 'center',
-      filtertype: 'date',
-    },
-    {
-      text: 'Status',
-      datafield: 'status',
-      width: '15%',
-      cellsalign: 'center',
-      align: 'center',
-      columntype: 'combobox',
-      cellbeginedit: this.cellbeginedit.bind(this),
-      cellendedit: this.cellendedit.bind(this),
-      initeditor: (row: number, cellvalue: string, editor: any) => {
-        editor.jqxComboBox({ autoDropDownHeight: true, source: this.status });
-        if (cellvalue) {
-          const index = this.status.findIndex((val) => val === cellvalue);
-          if (index >= 0) editor.jqxComboBox('selectIndex', index);
-        }
+  getColumns() {
+    this.column = [
+      {
+        text: 'Category',
+        datafield: 'category',
+        width: '30%',
+        cellsalign: 'center',
+        align: 'center',
       },
-      validation: (cell: any, value: string) => {
-        if (value == '') {
-          this.isSaveButtonDisabled = true;
-          return { result: false, message: 'Status cannot be null' };
-        }
-        this.isSaveButtonDisabled = false;
-        return true;
+      {
+        text: 'Amount',
+        datafield: 'amount',
+        width: '20%',
+        cellsalign: 'center',
+        align: 'center',
       },
-    },
-    {
-      text: 'Add Child',
-      width: '8%',
-      columntype: 'button',
-      cellsrenderer: (): string => {
-        return '<button class="add-child-button">Add Child</button>';
+      {
+        text: 'Date',
+        datafield: 'date',
+        width: '25%',
+        cellsformat: 'dd-MMM-yyyy',
+        cellsalign: 'center',
+        align: 'center',
+        filtertype: 'date',
       },
-    },
-  ];
+      {
+        text: 'Status',
+        datafield: 'status',
+        width: '15%',
+        cellsalign: 'center',
+        align: 'center',
+        columntype: 'combobox',
+        cellbeginedit: this.cellbeginedit.bind(this),
+        cellendedit: this.cellendedit.bind(this),
+        initeditor: (row: number, cellvalue: string, editor: any) => {
+          editor.jqxComboBox({ autoDropDownHeight: true, source: this.status });
+          if (cellvalue) {
+            const index = this.status.findIndex((val) => val === cellvalue);
+            if (index >= 0) editor.jqxComboBox('selectIndex', index);
+          }
+        },
+        validation: (cell: any, value: string) => {
+          if (value == '') {
+            this.isSaveButtonDisabled = true;
+            return { result: false, message: 'Status cannot be null' };
+          }
+          this.isSaveButtonDisabled = false;
+          return true;
+        },
+      },
+      {
+        text: 'Add Child',
+        width: '8%',
+        columntype: 'button',
+        cellsrenderer: (): string => {
+          return '<button class="add-child-button">Add Child</button>';
+        },
+      },
+    ];
+  }
 
   cellbeginedit(row: number, datafield: any): boolean {
     return this.TransactionGrid.getselectedrowindexes().includes(row);
@@ -283,24 +314,6 @@ export class TestingComponent implements OnInit {
 
       childData[datafield] = parseFloat(newvalue);
       childData['substatus'] = 'Success';
-
-      // const totalChildAmount = this.childData.reduce((sum: any, child: any) => {
-      //   console.log(child);
-      //   if (child['substatus'] == 'Success')
-      //     return sum + (child.subamount || 0);
-      // }, 0);
-
-      // console.log(totalChildAmount);
-
-      // if (totalChildAmount > parentData.amount) {
-      //   childData[datafield] = 0;
-      //   childData['substatus'] = 'Cancel';
-      //   this.toastr.warning(
-      //     'Total amount of subcategories cannot exceed the parent category amount.',
-      //     'Warning'
-      //   );
-      //   return;
-      // }
     }
   }
   editsubstatus(
@@ -314,10 +327,9 @@ export class TestingComponent implements OnInit {
     const childData = this.childData[row];
 
     const totalChildAmount = this.childData.reduce((sum: any, child: any) => {
+      if (sum == undefined) sum = 0;
       if (child['substatus'] == 'Success') return sum + (child.subamount || 0);
     }, 0);
-
-    console.log(totalChildAmount);
 
     if (totalChildAmount > parentData.amount) {
       childData['subamount'] = 0;
@@ -375,7 +387,6 @@ export class TestingComponent implements OnInit {
   childData: any[] = [];
   addChildRow(parentRowIndex: number): void {
     this.childData = this.childDataMap.get(parentRowIndex) || [];
-    console.log(parentRowIndex);
 
     // Add an empty child row
     let newChild: any = {
@@ -387,8 +398,6 @@ export class TestingComponent implements OnInit {
 
     this.childData.push(newChild);
     this.childDataMap.set(parentRowIndex, this.childData);
-
-    console.log(this.childData);
 
     this.refreshNestedGrid(parentRowIndex);
   }

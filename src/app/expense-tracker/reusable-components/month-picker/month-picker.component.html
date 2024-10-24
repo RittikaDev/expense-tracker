@@ -10,7 +10,6 @@
     [matDatepicker]="picker2"
     [formControlName]="controlName"
   />
-
   <mat-datepicker-toggle matSuffix [for]="picker2"></mat-datepicker-toggle>
   <mat-datepicker
     #picker2
@@ -20,9 +19,7 @@
 </mat-form-field>
 <div
   class="text-red-600 font-bold text-sm"
-  *ngIf="((formName?.get(controlName)?.touched ||
-    formName?.get(controlName)?.dirty) &&
-      !formName?.get(controlName)?.valid) && formName?.get(controlName)?.errors?.['required']"
+  *ngIf="((formName?.get(controlName)?.touched || formName?.get(controlName)?.dirty) && !formName?.get(controlName)?.valid) && formName?.get(controlName)?.errors?.['required']"
 >
   {{ placeholder }} is required
 </div>

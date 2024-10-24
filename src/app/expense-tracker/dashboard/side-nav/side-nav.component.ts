@@ -76,6 +76,9 @@ export class SideNavComponent {
   navigateToBudget() {
     this.router.navigate([`${this.commonUrl}budget`]);
   }
+  navigateToGoal() {
+    this.router.navigate([`${this.commonUrl}goal`]);
+  }
 
   logOut() {
     this.authService.logOut();
