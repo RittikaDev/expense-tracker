@@ -281,7 +281,13 @@ export class SavingGoalComponent implements OnInit {
       title: { text: 'Monthly Savings Target' },
       xAxis: { type: 'category', data: monthNames },
       yAxis: { type: 'value' },
-      series: [{ data: this.monthlySavingsTarget, type: 'bar' }],
+      series: [
+        {
+          data: this.monthlySavingsTarget,
+          type: 'bar',
+          itemStyle: { color: '#0891b2' },
+        },
+      ],
     };
 
     chart.setOption(option);

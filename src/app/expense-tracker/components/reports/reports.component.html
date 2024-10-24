@@ -1,0 +1,75 @@
+<section class="mx-16 mt-14">
+  <form
+    class="flex justify-center mb-4"
+    [formGroup]="reportForm"
+    (ngSubmit)="selectedDate()"
+  >
+    <div
+      class="panel panel-default border border-sky-200 rounded-md me-3 shadow-lg"
+    >
+      <div class="font-bold text-center p-2 mb-1 bg-blue-100">
+        Seach By Date
+      </div>
+      <div class="p-2">
+        <app-month-picker
+          [formName]="reportForm"
+          controlName="date"
+          placeholder="Date"
+        ></app-month-picker>
+        <div class="flex justify-center pb-2 mt-6">
+          <button
+            class="transaction-save-btn w-32 bg-sky-800"
+            mat-raised-button
+            [disabled]="!reportForm.valid"
+          >
+            Set Goal
+          </button>
+        </div>
+      </div>
+    </div>
+  </form>
+  @if(source.length > 0){
+  <div class="flex justify-between mt-10 mb-2">
+    <p class="w-40 text-lg font-semibold text-gray-900 dark:text-white">
+      All Transactions
+    </p>
+    <div class="flex flex-row-reverse">
+      <button
+        mat-raised-button
+        class="report-print-btn"
+        [disabled]="source.length <= 0"
+        (click)="generatePdf()"
+      >
+        Generate PDF
+      </button>
+      <button
+        mat-raised-button
+        class="transaction-save-btn me-4"
+        [disabled]="source.length <= 0"
+        (click)="downloadExcel()"
+      >
+        Download Excel
+      </button>
+    </div>
+  </div>
+  <jqxGrid
+    #ReportsGrid
+    [theme]="'energyblue'"
+    [source]="dataAdapter"
+    [columns]="column"
+    [autoheight]="true"
+    [pageable]="true"
+    [altrows]="true"
+    [filterable]="true"
+    [sortable]="true"
+    [showfilterrow]="true"
+    [pagesizeoptions]="['10', '15', '20', '25']"
+    [pagesize]="15"
+    [pagerheight]="15"
+    [autoheight]="true"
+    [columnsresize]="true"
+    [altrows]="true"
+    [width]="'100%'"
+  ></jqxGrid>
+  }
+</section>

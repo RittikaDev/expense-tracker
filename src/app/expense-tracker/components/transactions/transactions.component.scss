@@ -5,3 +5,7 @@
   background-color: #3c8dbc;
   color: #fff;
 }
+::ng-deep .mat-mdc-raised-button:not(:disabled).report-print-btn {
+  background-color: #0d9488;
+  color: #fff;
+}

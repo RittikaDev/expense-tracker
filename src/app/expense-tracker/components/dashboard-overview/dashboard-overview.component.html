@@ -1,6 +1,6 @@
 <section
   #textSection
-  class="text animate font-medium text-2xl text-gray-500 dark:text-white"
+  class="text animate font-medium text-2xl ms-12 text-gray-600 dark:text-white"
 >
   <div class="overflow-hidden whitespace-nowrap me-2">
     {{ greetingMessage }}, {{ loggedUser }}
@@ -11,9 +11,9 @@
 </section>
 
 <section class="flex justify-around">
-  <section>
+  <section class="flex">
     <div
-      class="w-96 max-w-md mb-6 p-4 bg-white border border-gray-200 rounded-lg shadow sm:p-6 dark:bg-gray-800 dark:border-gray-700"
+      class="w-80 h-40 max-w-md mb-6 p-4 bg-white border border-gray-200 rounded-lg shadow sm:p-6 dark:bg-gray-800 dark:border-gray-700 me-8"
     >
       <div class="flex items-center justify-between mb-4">
         <p class="text-base font-bold text-gray-900 dark:text-white">Income</p>
@@ -25,14 +25,14 @@
         <p class="text-base text-gray-900 dark:text-white pt-3 sm:pt-3 pb-0">
           {{ totalIncome }}
         </p>
-        <p class="text-base text-green-700 dark:text-white pt-3 sm:pt-3 pb-0">
+        <p class="text-base text-green-600 dark:text-white pt-3 sm:pt-3 pb-0">
           {{ incomeChangePercentage }}
         </p>
       </div>
     </div>
 
     <div
-      class="w-96 max-w-md p-4 bg-white border border-gray-200 rounded-lg shadow sm:p-6 dark:bg-gray-800 dark:border-gray-700"
+      class="w-80 h-40 max-w-md p-4 bg-white border border-gray-200 rounded-lg shadow sm:p-6 dark:bg-gray-800 dark:border-gray-700"
     >
       <div class="flex items-center justify-between mb-4">
         <p class="text-base font-bold text-gray-900 dark:text-white">Expense</p>
@@ -50,7 +50,8 @@
       </div>
     </div>
   </section>
-  <section class="w-1/2">
+  <!-- INCOME/EXPENSE PIE CHART -->
+  <section class="w-1/3">
     <ul
       class="hidden text-sm font-medium text-center text-gray-500 rounded-lg shadow sm:flex dark:divide-gray-700 dark:text-gray-400"
     >
@@ -86,13 +87,13 @@
         [options]="chartOptions"
         [theme]="theme"
         class="flex justify-center"
-        style="height: 350px"
+        style="height: 300px"
       ></echarts>
     </div>
   </section>
 </section>
 
-<section class="mt-14 mx-28 flex justify-between">
+<section class="mt-8 mx-28 flex justify-between">
   <div class="w-full">
     <p class="text-lg font-bold text-gray-900 dark:text-white">
       Financial Insights
