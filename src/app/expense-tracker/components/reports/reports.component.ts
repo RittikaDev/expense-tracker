@@ -116,64 +116,92 @@ export class ReportsComponent implements OnInit {
     ];
   }
 
+  excelCellMerge(worksheet: any, title: any) {
+    worksheet.mergeCells(`A${title.number}:C${title.number}`);
+    title.getCell(1).alignment = {
+      horizontal: 'center',
+      vertical: 'middle',
+    };
+  }
+  excelCellAllignment(cell: any) {
+    cell.alignment = { horizontal: 'center', vertical: 'middle' };
+    cell.border = {
+      top: { style: 'thin' },
+      left: { style: 'thin' },
+      bottom: { style: 'thin' },
+      right: { style: 'thin' },
+    };
+  }
+
   downloadExcel() {
     if (this.source.length > 0) {
       const workbook = new ExcelJS.Workbook();
       const worksheet = workbook.addWorksheet('Data');
 
-      worksheet.columns = [
-        { header: 'Category', key: 'category', width: 30 },
-        { header: 'Amount', key: 'amount', width: 15 },
-        { header: 'Date', key: 'date', width: 25 },
-      ];
+      const title = worksheet.addRow(['Expense Report']); // TITLE ON TOP
+      title.font = { bold: true, size: 16 };
+      this.excelCellMerge(worksheet, title);
+      worksheet.addRow([]);
 
-      // Add rows to the worksheet
-      this.source.forEach((item) => {
-        worksheet.addRow({
-          category: item.category,
-          amount: item.amount,
-          date: this.formatDate(item.date),
-        });
-      });
+      const userName = sessionStorage.getItem('displayName');
+      const userEmail = sessionStorage.getItem('email');
 
-      // Style the header row
-      const headerRow = worksheet.getRow(1);
-      headerRow.font = { bold: true, size: 16, color: { argb: 'FFFFFF' } }; // Bold, larger size, and white text
-      headerRow.fill = {
-        type: 'pattern', // Change from fillType to type
-        pattern: 'solid',
-        fgColor: { argb: '4F81BD' }, // Blue background
-      };
-      headerRow.alignment = { horizontal: 'center', vertical: 'middle' }; // Center align
+      const nameRow = worksheet.addRow([`Name: ${userName}`]);
+      this.excelCellMerge(worksheet, nameRow);
 
-      // Apply borders to the header row
-      headerRow.border = {
-        top: { style: 'thin' },
-        left: { style: 'thin' },
-        bottom: { style: 'thin' },
-        right: { style: 'thin' },
-      };
+      const emailRow = worksheet.addRow([`Email: ${userEmail}`]);
+      this.excelCellMerge(worksheet, emailRow);
 
-      // Apply styles to all content rows (starting from row 2)
-      worksheet.eachRow({ includeEmpty: true }, (row, rowNumber) => {
-        if (rowNumber > 1) {
-          // Only apply styles to content rows
-          row.font = { size: 14, color: { argb: '000000' } }; // Black text for content rows
-          row.alignment = { horizontal: 'center', vertical: 'middle' }; // Center align content
+      const reportRow = worksheet.addRow(['Report Analysis']);
+      this.excelCellMerge(worksheet, reportRow);
 
-          // Apply border styles
-          row.border = {
-            top: { style: 'thin' },
-            left: { style: 'thin' },
-            bottom: { style: 'thin' },
-            right: { style: 'thin' },
+      worksheet.addRow([]);
+
+      // MANUALLY ADDING TABLE HEADERS AS ROW
+      const headerRow = worksheet.addRow(['Category', 'Amount', 'Date']);
+
+      // Set custom column widths
+      worksheet.getColumn(1).width = 35; // WIDTH FOR Category
+      worksheet.getColumn(2).width = 20; // WIDTH FOR Amount
+      worksheet.getColumn(3).width = 30; // WIDTH FOR Date
+
+      headerRow.eachCell((cell, colNumber) => {
+        if (colNumber <= 3) {
+          cell.font = { bold: true, size: 16, color: { argb: 'FFFFFF' } };
+          cell.fill = {
+            type: 'pattern',
+            pattern: 'solid',
+            fgColor: { argb: '4F81BD' },
           };
+          this.excelCellAllignment(cell);
         }
       });
 
-      workbook.xlsx.writeBuffer().then((buffer) => {
-        this.saveAsExcelFile(buffer, 'ExportExcel');
+      this.source.forEach((item) => {
+        worksheet.addRow([
+          item.category,
+          item.amount,
+          this.formatDate(item.date),
+        ]);
       });
+
+      // APPLY STYLING TO FIRST THREE COLUMNS ONLY
+      worksheet.eachRow({ includeEmpty: true }, (row, rowNumber) => {
+        if (rowNumber > headerRow.number) {
+          // STYLE ONLY ROWS BELOW THE HEADER
+          row.eachCell((cell, colNumber) => {
+            if (colNumber <= 3) {
+              cell.font = { size: 14, color: { argb: '000000' } };
+              this.excelCellAllignment(cell);
+            }
+          });
+        }
+      });
+
+      // SAVE THE EXCEL FILE
+      workbook.xlsx
+        .writeBuffer()
+        .then((buffer) => this.saveAsExcelFile(buffer, 'ExportExcel'));
     }
   }
 

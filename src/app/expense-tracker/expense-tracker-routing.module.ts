@@ -15,6 +15,7 @@ import { AuthGuard } from '../guard/auth.guard';
 import { IncomeComponent } from './components/income/income.component';
 import { TestingComponent } from './components/testing/testing.component';
 import { SavingGoalComponent } from './components/saving-goal/saving-goal.component';
+import { ReportsComponent } from './components/reports/reports.component';
 
 const routes: Routes = [
   { path: 'login', component: LoginComponent },
@@ -53,6 +54,12 @@ const routes: Routes = [
         component: SavingGoalComponent,
         canActivate: [AuthGuard],
         data: { title: 'Saving Goals' },
+      },
+      {
+        path: 'reports',
+        component: ReportsComponent,
+        canActivate: [AuthGuard],
+        data: { title: 'Reports' },
       },
       {
         path: '',

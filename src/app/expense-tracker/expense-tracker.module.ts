@@ -39,6 +39,7 @@ import { SavingGoalComponent } from './components/saving-goal/saving-goal.compon
 
 import { MonthPickerComponent } from './reusable-components/month-picker/month-picker.component';
 import { MonthRangePickerComponent } from './reusable-components/month-range-picker/month-range-picker.component';
+import { ReportsComponent } from './components/reports/reports.component';
 
 @NgModule({
   declarations: [
@@ -55,6 +56,7 @@ import { MonthRangePickerComponent } from './reusable-components/month-range-pic
     MonthRangePickerComponent,
     TestingComponent,
     SavingGoalComponent,
+    ReportsComponent,
   ],
   imports: [
     CommonModule,

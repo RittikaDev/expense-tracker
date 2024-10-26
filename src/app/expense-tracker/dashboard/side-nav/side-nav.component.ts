@@ -79,6 +79,9 @@ export class SideNavComponent {
   navigateToGoal() {
     this.router.navigate([`${this.commonUrl}goal`]);
   }
+  navigateToReports() {
+    this.router.navigate([`${this.commonUrl}reports`]);
+  }
 
   logOut() {
     this.authService.logOut();
