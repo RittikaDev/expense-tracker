@@ -7,6 +7,7 @@ import { TransactionBudgetService } from '../../services/transaction-budget.serv
 import { ISavingsGoal } from '../../../interfaces/ISavings';
 import Swal from 'sweetalert2';
 import * as echarts from 'echarts';
+import { ITheme, theme$ } from '../../../interfaces/theme-switch';
 
 @Component({
   selector: 'app-saving-goal',
@@ -18,6 +19,8 @@ import * as echarts from 'echarts';
 })
 export class SavingGoalComponent implements OnInit {
   userID: string | null = '';
+
+  theme: ITheme = 'dark';
 
   goalForm: FormGroup = new FormGroup({});
 
@@ -36,6 +39,8 @@ export class SavingGoalComponent implements OnInit {
   monthlySavingsTarget: number[] = [];
 
   ngOnInit(): void {
+    theme$.subscribe((theme) => (this.theme = theme));
+
     this.goalForm = this.fb.group({
       purpose: ['', [Validators.required]],
       goal: [0, Validators.required],

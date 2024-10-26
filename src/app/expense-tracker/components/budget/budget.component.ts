@@ -11,6 +11,7 @@ import { TransactionBudgetService } from '../../services/transaction-budget.serv
 import { MatDatepicker } from '@angular/material/datepicker';
 import { DatePipe } from '@angular/common';
 import { AuthenticationService } from '../../services/authentication.service';
+import { ITheme, theme$ } from '../../../interfaces/theme-switch';
 
 @Component({
   selector: 'app-budget',
@@ -22,6 +23,7 @@ import { AuthenticationService } from '../../services/authentication.service';
 })
 export class BudgetComponent implements OnInit {
   @ViewChild('BudgetGrid') BudgetGrid!: jqxGridComponent;
+  theme: ITheme = 'dark';
 
   userID: string | null = '';
 
@@ -78,6 +80,8 @@ export class BudgetComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    theme$.subscribe((theme) => (this.theme = theme));
+
     this.budgetForm = this.fb.group({
       category: ['', [Validators.required]],
       budget: [0, Validators.required],

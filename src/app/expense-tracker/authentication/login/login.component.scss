@@ -79,3 +79,18 @@
 .pass-icon {
   font-size: 22px;
 }
+
+// DARK THEME FOR MATERIAL INPUTS
+::ng-deep .dark .mat-mdc-form-field-required-marker {
+  color: white;
+}
+::ng-deep .dark mat-label,
+::ng-deep
+  .dark
+  .mat-mdc-form-field:not(.mat-form-field-no-animations)
+  .mdc-text-field__input {
+  color: white;
+}
+::ng-deep .dark .mdc-notched-outline {
+  border: 1px solid white;
+}

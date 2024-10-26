@@ -42,6 +42,7 @@ export class MonthPickerComponent {
   @Input() placeholder: string = '';
   @Input() controlName!: Date | any;
   @Input() formName!: FormGroup;
+  @Input() theme!: any;
 
   @Output() btnClick = new EventEmitter();
 

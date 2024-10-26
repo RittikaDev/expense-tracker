@@ -15,6 +15,7 @@ import pdfFonts from 'pdfmake/build/vfs_fonts';
 
 import * as FileSaver from 'file-saver';
 import * as ExcelJS from 'exceljs';
+import { ITheme, theme$ } from '../../../interfaces/theme-switch';
 
 pdfMake.vfs = pdfFonts.pdfMake.vfs;
 
@@ -29,6 +30,8 @@ pdfMake.vfs = pdfFonts.pdfMake.vfs;
 })
 export class ReportsComponent implements OnInit {
   @ViewChild('ReportsGrid') ReportsGrid!: jqxGridComponent;
+
+  theme: ITheme = 'dark';
 
   reportForm: FormGroup = new FormGroup({});
 
@@ -55,6 +58,8 @@ export class ReportsComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    theme$.subscribe((theme) => (this.theme = theme));
+
     this.reportForm = this.fb.group({
       date: [new Date(), Validators.required],
     });

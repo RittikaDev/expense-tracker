@@ -13,6 +13,7 @@ import { TransactionBudgetService } from '../../services/transaction-budget.serv
 
 import { IIncome } from '../../../interfaces/TransactionBudget.interface';
 import { user } from '@angular/fire/auth';
+import { ITheme, theme$ } from '../../../interfaces/theme-switch';
 
 @Component({
   selector: 'app-income',
@@ -25,34 +26,11 @@ import { user } from '@angular/fire/auth';
 export class IncomeComponent implements OnInit {
   @ViewChild('IncomeGrid') IncomeGrid!: jqxGridComponent;
 
+  theme: ITheme = 'dark';
+
   userID: string | null = '';
 
   incomeForm: FormGroup = new FormGroup({});
-
-  // addIncomeToGrid() {
-  //   const newIncome = {
-  //     category: this.incomeForm.value.category,
-  //     amount: this.incomeForm.value.amount,
-  //     date: this.datepipe.transform(this.incomeForm.value.date, '01-MMM-yyyy'),
-  //   };
-
-  //   this.source = [newIncome, ...this.source];
-
-  //   this.arrayToSelectNewRows.push(newIncome);
-
-  //   this.incomeSource.localdata = this.source;
-  //   // this.dataAdapter = new jqx.dataAdapter(this.incomeSource);
-  //   this.IncomeGrid.updatebounddata();
-
-  //   this.arrayToSelectNewRows.map((newRow: IIncome, index: number) =>
-  //     this.IncomeGrid.selectrow(index)
-  //   );
-  //   console.log(this.IncomeGrid);
-  //   console.log(this.incomeSource.localdata);
-
-  //   this.incomeForm.reset({ amount: 0, date: new Date(), category: '' });
-  //   this.isSaveButtonDisabled = false;
-  // }
 
   income: IIncome[] = [];
   incomeColumn: any[] = [];
@@ -105,10 +83,19 @@ export class IncomeComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    // this.userID = this.authService.getUserId();
+    theme$.subscribe((theme) => (this.theme = theme));
 
     this.authService.userId$.subscribe((userId) => {
-      if (userId) this.userID = userId;
+      if (userId) {
+        this.userID = userId;
+
+        console.log(this.userID);
+
+        this.getColumns();
+        this.loadIncomeList();
+
+        this.dataAdapter = new jqx.dataAdapter(this.incomeSource);
+      }
     });
 
     this.incomeForm = this.fb.group({
@@ -116,12 +103,6 @@ export class IncomeComponent implements OnInit {
       amount: [0, Validators.required],
       date: [new Date(), Validators.required],
     });
-    console.log(this.userID);
-
-    this.getColumns();
-    this.loadIncomeList();
-
-    this.dataAdapter = new jqx.dataAdapter(this.incomeSource);
   }
 
   loadIncomeList() {

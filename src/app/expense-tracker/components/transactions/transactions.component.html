@@ -126,7 +126,7 @@
   <jqxGrid
     #TransactionGrid
     [selectionmode]="'checkbox'"
-    [theme]="'energyblue'"
+    [theme]="theme == 'dark' ? 'dark' : 'energyblue'"
     [source]="dataAdapter"
     [columns]="column"
     [autoheight]="true"

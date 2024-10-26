@@ -15,6 +15,7 @@
           [formName]="reportForm"
           controlName="date"
           placeholder="Date"
+          [theme]="theme"
         ></app-month-picker>
         <div class="flex justify-center pb-2 mt-6">
           <button
@@ -54,7 +55,7 @@
   </div>
   <jqxGrid
     #ReportsGrid
-    [theme]="'energyblue'"
+    [theme]="theme == 'dark' ? 'dark' : 'energyblue'"
     [source]="dataAdapter"
     [columns]="column"
     [autoheight]="true"

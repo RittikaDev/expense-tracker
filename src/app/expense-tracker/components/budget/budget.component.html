@@ -6,6 +6,7 @@
           [formName]="budgetForm"
           controlName="date"
           placeholder="Date"
+          [theme]="theme"
         ></app-month-picker>
       </div>
       <div class="flex">
@@ -44,7 +45,7 @@
     </form>
     <jqxGrid
       #BudgetGrid
-      [theme]="'energyblue'"
+      [theme]="theme == 'dark' ? 'dark' : 'energyblue'"
       [source]="dataAdapter"
       [columns]="budgetColumn"
       [autoheight]="true"
@@ -64,6 +65,11 @@
     ></jqxGrid>
   </div>
   <div class="w-3/5 h-full">
-    <div echarts [options]="chartOption" class="chart h-full"></div>
+    <div
+      echarts
+      [options]="chartOption"
+      class="chart h-full"
+      [theme]="theme"
+    ></div>
   </div>
 </section>

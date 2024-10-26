@@ -5,6 +5,7 @@
         [formName]="incomeForm"
         controlName="date"
         placeholder="Date"
+        [theme]="theme"
       ></app-month-picker>
     </div>
     <div class="flex">
@@ -43,10 +44,9 @@
   </form>
   <jqxGrid
     #IncomeGrid
-    [theme]="'energyblue'"
+    [theme]="theme == 'dark' ? 'dark' : 'energyblue'"
     [source]="dataAdapter"
     [columns]="incomeColumn"
-    [theme]="'energyblue'"
     [autoheight]="true"
     [pageable]="true"
     [altrows]="true"

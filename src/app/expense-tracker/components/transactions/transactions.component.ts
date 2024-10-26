@@ -10,6 +10,7 @@ import { ITransaction } from '../../../interfaces/TransactionBudget.interface';
 import { TransactionBudgetService } from '../../services/transaction-budget.service';
 import { DatePipe } from '@angular/common';
 import { AuthenticationService } from '../../services/authentication.service';
+import { ITheme, theme$ } from '../../../interfaces/theme-switch';
 
 @Component({
   selector: 'app-transactions',
@@ -22,6 +23,9 @@ import { AuthenticationService } from '../../services/authentication.service';
 })
 export class TransactionsComponent implements OnInit {
   @ViewChild('TransactionGrid') TransactionGrid!: jqxGridComponent;
+
+  theme: ITheme = 'dark';
+
   userID: string | null = '';
 
   transactionForm: FormGroup = new FormGroup({});
@@ -54,6 +58,8 @@ export class TransactionsComponent implements OnInit {
   dataAdapter: any;
 
   ngOnInit(): void {
+    theme$.subscribe((theme) => (this.theme = theme));
+
     this.userID = this.authService.getUserId();
     this.authService.userId$.subscribe((userId) => {
       if (userId) {
@@ -63,11 +69,6 @@ export class TransactionsComponent implements OnInit {
         this.dataAdapter = new jqx.dataAdapter(this.transactionSource);
       }
     });
-    // this.source.map((data: ITransaction) => {
-    //   if (data.status === 'Success') this.totalExpense += data.amount;
-    // });
-
-    // this.totalAmount = this.totalIncome - this.totalExpense;
 
     this.transactionForm = this.fb.group({
       category: ['', [Validators.required]],

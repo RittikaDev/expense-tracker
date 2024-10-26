@@ -1,4 +1,4 @@
-<main [attr.data-theme]="theme" class="{{ theme }}">
+<main [attr.data-theme]="theme" class="{{ theme }}" class="h-full">
   <section [attr.data-theme]="theme" class="{{ theme }}">
     <nav
       class="fixed top-0 left-0 w-full z-50 bg-white border-b border-gray-200 dark:bg-gray-800 dark:border-gray-700"
@@ -198,19 +198,8 @@
     </aside>
   </section>
 
-  <div class="p-4 sm:ml-64 sm:mt-20 dark:bg-gray-700">
-    <p class="font-medium text-base text-capitalize mt-4">
-      {{ Heading }}
-    </p>
+  <div class="p-4 sm:ml-64 sm:mt-20 h-full dark:bg-gray-700">
+    <p class="font-medium text-base text-capitalize mt-4">{{ Heading }}</p>
     <router-outlet></router-outlet>
   </div>
 </main>
-<!-- <ngx-spinner
-  bdColor="rgba(0, 0, 0, 0.8)"
-  size="medium"
-  type="timer"
-  [color]="theme == 'dark' ? '#7dd3fc' : '#0891b2'"
-  ><p [ngClass]="theme == 'dark' ? 'text-sky-300' : 'text-cyan-600'">
-    Loading...
-  </p></ngx-spinner
-> -->
