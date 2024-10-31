@@ -102,7 +102,7 @@ export class AuthenticationService {
         .signInWithEmailAndPassword(email, password)
         .then(async (result: any) => {
           const firebaseToken = await result.user.getIdToken();
-
+          console.log(firebaseToken);
           this.http
             .post(`${this.apiUrl}authenticate`, { token: firebaseToken })
             .subscribe({
