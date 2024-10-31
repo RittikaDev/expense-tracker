@@ -12,7 +12,6 @@ import { AuthenticationService } from '../../services/authentication.service';
 import { TransactionBudgetService } from '../../services/transaction-budget.service';
 
 import { IIncome } from '../../../interfaces/TransactionBudget.interface';
-import { user } from '@angular/fire/auth';
 import { ITheme, theme$ } from '../../../interfaces/theme-switch';
 
 @Component({
@@ -85,6 +84,11 @@ export class IncomeComponent implements OnInit {
   ngOnInit(): void {
     theme$.subscribe((theme) => (this.theme = theme));
 
+    this.incomeForm = this.fb.group({
+      category: ['', [Validators.required]],
+      amount: [0, Validators.required],
+      date: [new Date(), Validators.required],
+    });
     this.authService.userId$.subscribe((userId) => {
       if (userId) {
         this.userID = userId;
@@ -97,17 +101,13 @@ export class IncomeComponent implements OnInit {
         this.dataAdapter = new jqx.dataAdapter(this.incomeSource);
       }
     });
-
-    this.incomeForm = this.fb.group({
-      category: ['', [Validators.required]],
-      amount: [0, Validators.required],
-      date: [new Date(), Validators.required],
-    });
   }
 
   loadIncomeList() {
     const year = new Date(this.incomeForm.value.date).getFullYear();
     const month = new Date(this.incomeForm.value.date).getMonth() + 1;
+
+    console.log(year, month);
 
     this.transactionBudgetService
       .GetIncomeList(this.userID, year, month)
